@@ -1,0 +1,49 @@
+id: planning-decomposition
+version: 0.1.0
+name: Planning Decomposition
+description: Converts a goal into bounded deliverables, dependencies, risks, and next actions without implying that work has already occurred.
+purpose: Produce executable plans that make assumptions and sequencing visible.
+applicability:
+  - Project planning
+  - Personal goals
+  - Technical initiatives
+required_inputs:
+  goal:
+    type: string
+    description: Desired outcome or project goal.
+    required: true
+  constraints:
+    type: array
+    description: Known deadlines, resources, exclusions, and constraints.
+    required: false
+procedure:
+  - step: 1
+    action: Define the outcome
+    details: Restate the desired result in observable terms and identify what is out of scope.
+  - step: 2
+    action: Decompose into deliverables
+    details: Create a bounded set of tasks with owners, inputs, outputs, and completion criteria.
+  - step: 3
+    action: Map dependencies
+    details: Identify prerequisites and mark tasks that can proceed in parallel.
+  - step: 4
+    action: Surface risks and assumptions
+    details: Distinguish known constraints from assumptions requiring confirmation.
+  - step: 5
+    action: Recommend next actions
+    details: Select the smallest useful next actions and identify unresolved decisions.
+constraints:
+  - Do not claim that planned tasks are completed.
+  - Do not create external tasks, events, or commitments without explicit approval.
+  - Keep the plan bounded and expose uncertainty rather than hiding it.
+expected_output:
+  format: structured_json
+  description: Plan containing goal, deliverables, dependencies, risks, assumptions, and next actions.
+failure_behavior:
+  on_missing_input: Ask for the goal or identify which missing constraint materially changes the plan.
+  on_ambiguity: State assumptions and ask only the highest-impact clarification questions.
+  on_tool_failure: Return a draft plan with an explicit limitation.
+examples:
+  - title: Plan a small software initiative
+    input: Build a scheduled research digest with no public posting.
+    expected_result: Bounded deliverables, workflow dependencies, risks, and a first implementation slice.

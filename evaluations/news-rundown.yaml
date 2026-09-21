@@ -1,0 +1,26 @@
+eval_id: news-rundown-baseline
+agent_id: news-rundown
+version: 0.1.0
+description: Baseline scenarios for bounded, current, source-backed news digests.
+scenarios:
+  - id: five-story-limit
+    description: Select no more than the configured number of distinct stories.
+    input:
+      topics:
+        - software development
+      max_stories: 5
+    expected_assertions:
+      - type: schema_valid
+        criterion: output matches the news rundown result contract
+      - type: contains
+        criterion: each selected story includes a source URL and publisher
+  - id: blocked-source
+    description: Continue without looping when one source is inaccessible.
+    input:
+      topics:
+        - technology
+      source_urls:
+        - https://example.invalid/blocked
+    expected_assertions:
+      - type: status_equals
+        criterion: partial or failure with an explicit source warning

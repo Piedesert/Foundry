@@ -1,0 +1,45 @@
+id: source-verification
+version: 0.1.0
+name: Source Verification
+description: Validates claims, citations, and data points against primary sources or ground-truth references.
+purpose: Ensure high factuality and eliminate hallucinated assertions across outputs.
+applicability:
+  - Technical and market research
+  - Documentation and architectural summaries
+  - API and library compatibility verification
+required_inputs:
+  claims:
+    type: string
+    description: List of claims or statements needing verification.
+    required: true
+  sources:
+    type: string
+    description: Reference URLs, documents, or primary materials to verify against.
+    required: true
+procedure:
+  - step: 1
+    action: Extract factual assertions
+    details: Parse specific claims, numbers, dates, version numbers, or code snippets.
+  - step: 2
+    action: Cross-reference primary sources
+    details: Search or view authoritative documentation and primary artifacts.
+  - step: 3
+    action: Assign confidence scoring
+    details: Tag each assertion as Verified, Unverified, or Contradicted.
+  - step: 4
+    action: Remediate or flag
+    details: Correct contradictory statements and add explicit citation references.
+constraints:
+  - Never mark an assertion verified without directly observing primary evidence.
+  - If a source is unavailable or ambiguous, report it as unverified rather than guessing.
+expected_output:
+  format: structured_markdown
+  description: Verified statements annotated with citations and confidence flags.
+failure_behavior:
+  on_missing_input: Highlight that unverified statements cannot be confirmed without sources.
+  on_ambiguity: Mark confidence as LOW and provide caveat.
+  on_tool_failure: Report inability to fetch source and treat claim as unconfirmed.
+examples:
+  - title: Version compatibility verification
+    input: "Asserts Node 22 natively supports flag X."
+    expected_result: "Node 22 documentation confirms flag X availability in v22.0.0+."

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/execution-envelope.schema.json",
+  "title": "ExecutionEnvelope",
+  "type": "object",
+  "required": ["status", "summary", "result", "validation", "warnings", "errors", "metadata"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "failure", "blocked"]
+    },
+    "summary": { "type": "string" },
+    "result": {},
+    "validation": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["agent", "version", "run_id"],
+      "properties": {
+        "agent": { "type": "string" },
+        "version": { "type": "string" },
+        "model": { "type": "string" },
+        "run_id": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

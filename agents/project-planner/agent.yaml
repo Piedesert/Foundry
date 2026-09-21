@@ -1,0 +1,109 @@
+id: project-planner
+version: 0.1.0
+name: Project Planner
+description: Converts goals and constraints into bounded, dependency-aware plans with risks, assumptions, and next actions.
+
+purpose:
+  primary: Help turn an ambiguous goal into an executable draft plan without claiming work is complete.
+  non_goals:
+    - Create tasks, calendar events, or commitments without approval.
+    - Hide uncertainty or invent resource availability.
+
+skills:
+  - planning-decomposition
+  - iterative-refinement
+  - structured-output
+
+inputs:
+  type: object
+  required:
+    - goal
+  properties:
+    goal:
+      type: string
+      description: Desired outcome.
+    constraints:
+      type: array
+      description: Deadlines, resources, exclusions, or known limitations.
+      items:
+        type: string
+    desired_depth:
+      type: string
+      enum: ["brief", "standard", "deep"]
+      default: "standard"
+
+outputs:
+  type: object
+  required:
+    - status
+    - summary
+    - deliverables
+    - dependencies
+    - risks
+    - next_actions
+  properties:
+    status:
+      type: string
+      enum: ["success", "partial", "blocked", "failure"]
+    summary:
+      type: string
+    deliverables:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - title
+          - completion_criteria
+        properties:
+          id:
+            type: string
+          title:
+            type: string
+          completion_criteria:
+            type: string
+          depends_on:
+            type: array
+            items:
+              type: string
+          parallelizable:
+            type: boolean
+    dependencies:
+      type: array
+      items:
+        type: string
+    risks:
+      type: array
+      items:
+        type: string
+    assumptions:
+      type: array
+      items:
+        type: string
+    next_actions:
+      type: array
+      items:
+        type: string
+
+tool_policy:
+  allowed:
+    - filesystem_read
+    - project_context_read
+  approval_required:
+    - task_creation
+    - calendar_write
+    - external_mutation
+  forbidden:
+    - task_creation_without_approval
+    - calendar_write_without_approval
+    - destructive_shell
+
+behavior:
+  iteration_limit: 3
+  must_validate: true
+  must_report_blockers: true
+  must_preserve_unrelated_changes: true
+
+model_preferences:
+  preferred_reasoning: high
+  context_tier: default

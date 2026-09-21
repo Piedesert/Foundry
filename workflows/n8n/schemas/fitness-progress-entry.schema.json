@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/fitness-progress-entry.schema.json",
+  "title": "FitnessProgressEntry",
+  "type": "object",
+  "required": ["entry_id", "recorded_at"],
+  "properties": {
+    "entry_id": { "type": "string", "minLength": 1 },
+    "recorded_at": { "type": "string", "minLength": 1 },
+    "session_type": { "type": "string" },
+    "completed": { "type": "boolean" },
+    "exercises": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "sets": { "type": "integer", "minimum": 0 },
+          "repetitions": { "type": "integer", "minimum": 0 },
+          "load": { "type": "string" },
+          "duration_minutes": { "type": "number", "minimum": 0 },
+          "effort": { "type": "number", "minimum": 0, "maximum": 10 },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "properties": {
+        "sleep_hours": { "type": "number", "minimum": 0 },
+        "energy": { "type": "number", "minimum": 0, "maximum": 10 },
+        "soreness": { "type": "number", "minimum": 0, "maximum": 10 },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "subjective_notes": { "type": "string" },
+    "limitations_reported": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+id: fitness-resource-grounding
+version: 0.1.0
+name: Fitness Resource Grounding
+description: Grounds fitness recommendations in retrieved resources and user-provided context while preserving provenance and uncertainty.
+purpose: Make RAG-backed coaching traceable, conflict-aware, and resistant to invented evidence.
+applicability:
+  - Fitness and exercise coaching
+  - Resource-grounded routine design
+  - Personal training notes and progress review
+required_inputs:
+  goal:
+    type: string
+    description: User goal and requested coaching outcome.
+    required: true
+  retrieved_resources:
+    type: array
+    description: Retrieved passages or records with source metadata.
+    required: false
+  user_context:
+    type: object
+    description: User facts, preferences, limitations, and progress context.
+    required: true
+procedure:
+  - step: 1
+    action: Classify evidence
+    details: Separate user facts, personal logs, retrieved claims, and general coaching heuristics.
+  - step: 2
+    action: Check provenance and relevance
+    details: Confirm each used resource has an identifiable source and directly supports the recommendation.
+  - step: 3
+    action: Resolve conflicts conservatively
+    details: Prefer safety constraints and current user facts, then disclose meaningful conflicts or missing evidence.
+  - step: 4
+    action: Package citations
+    details: Attach source identity and locator information to material claims without inventing citations.
+constraints:
+  - Never claim that an unavailable or empty resource set supports a recommendation.
+  - Never override an explicit user safety limitation with retrieved advice.
+  - Mark unsupported or conflicting claims as uncertain.
+expected_output:
+  format: structured_json
+  description: Recommendations with evidence class, provenance, confidence, conflicts, and limitations.
+failure_behavior:
+  on_missing_input: Return a partial result and identify the missing context or resource metadata.
+  on_ambiguity: Report the conflict and use the safer actionable interpretation.
+  on_tool_failure: Continue only with clearly labeled general guidance and report retrieval failure.

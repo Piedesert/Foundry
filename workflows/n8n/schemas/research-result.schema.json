@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/research-result.schema.json",
+  "title": "ResearchResult",
+  "type": "object",
+  "required": ["status", "summary", "key_findings", "sources"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "blocked", "failure"]
+    },
+    "summary": { "type": "string" },
+    "key_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding", "confidence", "citation"],
+        "properties": {
+          "finding": { "type": "string" },
+          "confidence": { "type": "string" },
+          "citation": { "type": "string" }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

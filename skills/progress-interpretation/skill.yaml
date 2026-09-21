@@ -1,0 +1,42 @@
+id: progress-interpretation
+version: 0.1.0
+name: Progress Interpretation
+description: Turns user-provided training check-ins into cautious observations, adjustments, and proposed log entries.
+purpose: Support consistent progress tracking without overclaiming causes or silently persisting personal data.
+applicability:
+  - Training progress reviews
+  - Routine adjustments
+  - Check-in planning
+required_inputs:
+  progress_history:
+    type: array
+    description: User-provided dated check-ins or progress-log entries.
+    required: false
+  current_routine:
+    type: object
+    description: Current plan against which progress is reviewed.
+    required: false
+procedure:
+  - step: 1
+    action: Normalize observations
+    details: Separate dates, reported measures, adherence, effort, recovery, and subjective experience.
+  - step: 2
+    action: Identify trends cautiously
+    details: Describe repeated patterns without inferring medical or causal explanations from sparse data.
+  - step: 3
+    action: Recommend a small adjustment
+    details: Suggest one or two measurable next steps tied to the user's goal and current capacity.
+  - step: 4
+    action: Propose tracking
+    details: Return reviewable log entries and the next check-in fields without writing to persistent storage.
+constraints:
+  - Do not fabricate missing dates, measurements, adherence, or outcomes.
+  - Do not diagnose causes of pain, fatigue, weight change, or stalled progress.
+  - Distinguish observed data, interpretation, and recommendation.
+expected_output:
+  format: structured_json
+  description: Progress observations, confidence, recommended adjustments, open questions, and proposed log entries.
+failure_behavior:
+  on_missing_input: State that no trend can be established and provide a useful check-in template.
+  on_ambiguity: Preserve multiple plausible interpretations and ask for the smallest clarifying detail.
+  on_tool_failure: Return only directly observed progress facts and report the limitation.

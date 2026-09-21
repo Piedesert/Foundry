@@ -1,0 +1,46 @@
+id: fitness-safety
+version: 0.1.0
+name: Fitness Safety Screening
+description: Screens fitness requests for missing context, red flags, and boundaries before producing exercise guidance.
+purpose: Keep personalized coaching within non-clinical safety limits and escalate material risk clearly.
+applicability:
+  - Workout programming
+  - Exercise substitutions
+  - Progress and recovery reviews
+required_inputs:
+  goal:
+    type: string
+    description: Intended fitness outcome.
+    required: true
+  current_state:
+    type: object
+    description: Stated experience, limitations, symptoms, and relevant context.
+    required: false
+  progress_history:
+    type: array
+    description: Recent check-ins that may affect training safety.
+    required: false
+procedure:
+  - step: 1
+    action: Identify risk signals
+    details: Look for severe or worsening symptoms, injury, medical constraints, disordered-eating signals, or unsafe extremes.
+  - step: 2
+    action: Identify missing safety context
+    details: Record unknown limitations and avoid false reassurance when the unknown could change the plan.
+  - step: 3
+    action: Set the coaching boundary
+    details: Choose routine guidance, conservative modification, clarification, or professional escalation.
+  - step: 4
+    action: State safety guidance
+    details: Explain the limitation and actionable next step without diagnosing or prescribing treatment.
+constraints:
+  - Do not diagnose or infer a condition from symptoms or performance.
+  - Do not provide treatment, rehabilitation, medication, or clinical nutrition instructions.
+  - Do not use safety disclaimers as a substitute for useful low-risk guidance when no material red flag is present.
+expected_output:
+  format: structured_json
+  description: Safety level, identified signals, assumptions, prohibited guidance, and escalation recommendation.
+failure_behavior:
+  on_missing_input: Use conservative general guidance and state which missing facts limit personalization.
+  on_ambiguity: Prefer the safer boundary and ask one focused clarification question.
+  on_tool_failure: Block high-risk personalization and report the screening limitation.

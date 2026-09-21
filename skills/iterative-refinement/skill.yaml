@@ -1,0 +1,46 @@
+id: iterative-refinement
+version: 0.1.0
+name: Iterative Refinement
+description: Systematically inspects interim outputs against criteria, identifies deficiencies, and performs targeted correction cycles.
+purpose: Improve solution quality and eliminate edge-case errors before finalizing execution.
+applicability:
+  - Complex research queries
+  - Code refactoring and bug fixing
+  - Multi-step document drafting
+required_inputs:
+  draft_content:
+    type: string
+    description: Initial output or solution draft to refine.
+    required: true
+  criteria:
+    type: string
+    description: Standards, requirements, or test constraints to satisfy.
+    required: true
+procedure:
+  - step: 1
+    action: Analyze against criteria
+    details: Compare current draft directly against required constraints and failure criteria.
+  - step: 2
+    action: Formulate delta plan
+    details: List specific, surgical fixes rather than rewriting from scratch without clear reason.
+  - step: 3
+    action: Execute corrections
+    details: Apply targeted changes and verify no regressions were introduced.
+  - step: 4
+    action: Confirm closure
+    details: Ensure all criteria have passed and verify stopping condition.
+constraints:
+  - Stop iteration once criteria are satisfied or maximum loop count is reached.
+  - Do not introduce unrelated modifications outside the stated criteria.
+  - Always explain what changed between iterations.
+expected_output:
+  format: markdown
+  description: Refined final content with a summary of iterative improvements made.
+failure_behavior:
+  on_missing_input: Request required criteria or draft before proceeding.
+  on_ambiguity: State assumed criteria and ask for clarification if critical.
+  on_tool_failure: Document tool limitation and provide best-effort refinement with explicit warnings.
+examples:
+  - title: Code refinement
+    input: "Draft function lacks boundary check for negative index."
+    expected_result: "Updated function with boundary assertion and unit test case."

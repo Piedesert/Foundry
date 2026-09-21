@@ -1,0 +1,11 @@
+workflow_id: research-and-verify
+version: 0.1.0
+name: Research and Verify
+agent_id: research
+trigger_type: webhook
+input_schema_ref: workflows/n8n/schemas/research-request.schema.json
+output_schema_ref: workflows/n8n/schemas/research-result.schema.json
+retry_policy:
+  max_attempts: 2
+  backoff_seconds: 10
+failure_mode: return_structured_error

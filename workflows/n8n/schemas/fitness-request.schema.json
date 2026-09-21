@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/fitness-request.schema.json",
+  "title": "FitnessRequest",
+  "type": "object",
+  "required": ["goal"],
+  "properties": {
+    "goal": { "type": "string", "minLength": 1 },
+    "equipment": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "days_per_week": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "available_days": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "minutes_per_session": { "type": "integer", "minimum": 1 },
+        "preferred_times": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "routine_preferences": {
+      "type": "object",
+      "properties": {
+        "preferred_exercises": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "excluded_exercises": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "training_style": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "current_state": {
+      "type": "object",
+      "properties": {
+        "experience_level": { "type": "string" },
+        "current_routine": { "type": "string" },
+        "limitations_or_concerns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "professional_clearance": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "progress_history": {
+      "type": "array",
+      "items": { "$ref": "fitness-progress-entry.schema.json" }
+    },
+    "retrieved_resources": {
+      "type": "array",
+      "items": { "$ref": "fitness-resource.schema.json" }
+    },
+    "requested_output": {
+      "type": "string",
+      "enum": ["routine", "progress_review", "adaptation", "check_in_template", "general_guidance"]
+    }
+  },
+  "additionalProperties": false
+}

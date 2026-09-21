@@ -1,0 +1,45 @@
+id: structured-output
+version: 0.1.0
+name: Structured Output Packaging
+description: Envelopes agent output into a predictable JSON or Markdown schema for harness and workflow consumers.
+purpose: Standardize machine readability and guarantee error transparency across all harnesses and n8n nodes.
+applicability:
+  - Agent-to-agent communication
+  - n8n workflow triggers and response nodes
+  - Automated evaluation harnesses
+required_inputs:
+  payload:
+    type: object
+    description: Core execution result or findings to package.
+    required: true
+  status:
+    type: string
+    description: Execution status (success, partial, failure, blocked).
+    required: true
+procedure:
+  - step: 1
+    action: Validate payload structure
+    details: Verify all required fields from target schema are present and populated.
+  - step: 2
+    action: Populate execution metadata
+    details: Include agent ID, version, timestamp, and model telemetry if available.
+  - step: 3
+    action: Add diagnostics and warnings
+    details: Append warnings, validation errors, and blocker details into explicit arrays.
+  - step: 4
+    action: Serialize standard envelope
+    details: Produce valid JSON matching the execution-envelope specification.
+constraints:
+  - Output must strictly adhere to valid JSON with no markdown wrapping if JSON format is requested.
+  - Never omit the status or error arrays even if empty.
+expected_output:
+  format: json_envelope
+  description: Valid JSON envelope with status, summary, result, validation, warnings, errors, and metadata.
+failure_behavior:
+  on_missing_input: Generate an error-status envelope detailing missing payload fields.
+  on_ambiguity: Include unparsed data under warnings and return partial status.
+  on_tool_failure: Emit failure status envelope with error trace details.
+examples:
+  - title: Successful envelope packaging
+    input: "Research findings on SQLite concurrency."
+    expected_result: "JSON envelope with status: 'success' and structured findings."

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/evaluation.schema.json",
+  "title": "EvaluationDataset",
+  "description": "Schema for scenario-based evaluation and regression testing of agents",
+  "type": "object",
+  "required": [
+    "eval_id",
+    "agent_id",
+    "version",
+    "scenarios"
+  ],
+  "properties": {
+    "eval_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "agent_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "input", "expected_assertions"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "input": { "type": "object" },
+          "expected_assertions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "criterion"],
+              "properties": {
+                "type": { "type": "string", "enum": ["contains", "schema_valid", "not_contains", "tool_used", "status_equals"] },
+                "criterion": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/workflow.schema.json",
+  "title": "WorkflowContract",
+  "description": "Schema for orchestrating agent executions across n8n and automation harnesses",
+  "type": "object",
+  "required": [
+    "workflow_id",
+    "version",
+    "agent_id",
+    "input_schema_ref",
+    "output_schema_ref",
+    "retry_policy",
+    "failure_mode"
+  ],
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "agent_id": {
+      "type": "string"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": ["webhook", "schedule", "manual", "event"]
+    },
+    "input_schema_ref": {
+      "type": "string"
+    },
+    "output_schema_ref": {
+      "type": "string"
+    },
+    "retry_policy": {
+      "type": "object",
+      "required": ["max_attempts"],
+      "properties": {
+        "max_attempts": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "backoff_seconds": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "failure_mode": {
+      "type": "string",
+      "enum": ["return_structured_error", "fail_immediately", "dead_letter_queue"]
+    }
+  },
+  "additionalProperties": false
+}

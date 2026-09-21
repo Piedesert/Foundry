@@ -1,0 +1,53 @@
+id: routine-building
+version: 0.1.0
+name: Routine Building
+description: Converts a fitness goal, schedule, equipment, and preferences into a feasible routine with progression rules.
+purpose: Produce clear, sustainable, and adaptable routines rather than generic exercise lists.
+applicability:
+  - Weekly workout planning
+  - Exercise substitutions
+  - Routine adaptation
+required_inputs:
+  goal:
+    type: string
+    description: Desired outcome.
+    required: true
+  equipment:
+    type: array
+    description: Available equipment.
+    required: false
+  schedule:
+    type: object
+    description: Days, session duration, and timing.
+    required: false
+  routine_preferences:
+    type: object
+    description: Training preferences and exclusions.
+    required: false
+procedure:
+  - step: 1
+    action: Define the routine target
+    details: Translate the goal into a bounded weekly structure and measurable session outcomes.
+  - step: 2
+    action: Select movements
+    details: Choose accessible movements that fit equipment, experience, preferences, and safety limits.
+  - step: 3
+    action: Specify dosage
+    details: Provide sets, repetitions or time, effort guidance, rest, warm-up, and cooldown.
+  - step: 4
+    action: Add progression and substitutions
+    details: Define a conservative progression trigger and equivalent alternatives for constraints.
+  - step: 5
+    action: Check feasibility
+    details: Ensure the routine fits the schedule and identify assumptions requiring confirmation.
+constraints:
+  - Do not promise guaranteed physical outcomes.
+  - Do not prescribe exercise through a reported injury or medical condition.
+  - Keep the routine executable with the supplied equipment and time.
+expected_output:
+  format: structured_json
+  description: A weekly routine with session details, progression criteria, substitutions, assumptions, and recovery notes.
+failure_behavior:
+  on_missing_input: Provide a conservative template only when safe and list the context needed for personalization.
+  on_ambiguity: Present the smallest viable option and ask a focused question.
+  on_tool_failure: Return a partial routine with explicit limitations.

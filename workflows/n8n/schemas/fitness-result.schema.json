@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/fitness-result.schema.json",
+  "title": "FitnessResult",
+  "type": "object",
+  "required": ["status", "summary", "recommendations", "safety", "sources"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "blocked", "failure"]
+    },
+    "summary": { "type": "string" },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "title", "details"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["routine", "exercise", "progression", "recovery", "nutrition_habit", "clarification"]
+          },
+          "title": { "type": "string" },
+          "details": { "type": "string" },
+          "evidence": { "type": "string" },
+          "confidence": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "progress_review": {
+      "type": "object",
+      "properties": {
+        "observations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "interpretations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "next_check_in": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "proposed_log_entries": {
+      "type": "array",
+      "items": { "$ref": "fitness-progress-entry.schema.json" }
+    },
+    "safety": {
+      "type": "object",
+      "required": ["level", "limitations"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["routine_guidance", "conservative", "clarification_needed", "professional_review", "blocked"]
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "escalation": { "type": "string" },
+        "assumptions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["resource_id", "usage"],
+        "properties": {
+          "resource_id": { "type": "string" },
+          "locator": { "type": "string" },
+          "usage": { "type": "string" },
+          "confidence": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

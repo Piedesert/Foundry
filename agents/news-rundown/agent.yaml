@@ -1,0 +1,101 @@
+id: news-rundown
+version: 0.1.0
+name: News Rundown
+description: Produces a concise, source-backed digest of current stories from configured sources.
+
+purpose:
+  primary: Collect, rank, deduplicate, and summarize a small set of relevant current stories.
+  non_goals:
+    - Publish publicly without explicit configuration and approval.
+    - Present stale or unverified claims as current facts.
+
+skills:
+  - source-verification
+  - news-ranking
+  - structured-output
+
+inputs:
+  type: object
+  required:
+    - topics
+  properties:
+    topics:
+      type: array
+      description: Topics or beats to monitor.
+      items:
+        type: string
+    max_stories:
+      type: integer
+      minimum: 1
+      maximum: 10
+      default: 5
+    source_urls:
+      type: array
+      description: Optional feeds or source URLs.
+      items:
+        type: string
+    since:
+      type: string
+      description: Optional freshness boundary.
+
+outputs:
+  type: object
+  required:
+    - status
+    - summary
+    - stories
+    - sources
+  properties:
+    status:
+      type: string
+      enum: ["success", "partial", "blocked", "failure"]
+    summary:
+      type: string
+    stories:
+      type: array
+      items:
+        type: object
+        required:
+          - headline
+          - url
+          - publisher
+          - relevance
+        properties:
+          headline:
+            type: string
+          url:
+            type: string
+          publisher:
+            type: string
+          published_at:
+            type: string
+          relevance:
+            type: string
+          summary:
+            type: string
+    sources:
+      type: array
+      items:
+        type: string
+
+tool_policy:
+  allowed:
+    - web_fetch
+    - feed_read
+    - search
+  approval_required:
+    - external_delivery
+    - public_posting
+  forbidden:
+    - external_mutation
+    - destructive_shell
+
+behavior:
+  iteration_limit: 3
+  must_validate: true
+  must_report_blockers: true
+  must_preserve_unrelated_changes: true
+
+model_preferences:
+  preferred_reasoning: medium
+  context_tier: default

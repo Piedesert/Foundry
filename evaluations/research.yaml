@@ -1,0 +1,29 @@
+eval_id: research-baseline
+agent_id: research
+version: 0.1.0
+description: Baseline regression scenarios for the Research Specialist.
+scenarios:
+  - id: grounded-technical-summary
+    description: Research a technical topic and separate verified claims from uncertainty.
+    input:
+      topic: SQLite WAL mode concurrency
+      depth: standard
+    expected_assertions:
+      - type: schema_valid
+        criterion: output matches the research result contract
+      - type: contains
+        criterion: key findings include citations
+      - type: not_contains
+        criterion: output does not present unsupported claims as verified
+  - id: narrow-focus
+    description: Honor a requested focus area instead of producing a broad overview.
+    input:
+      topic: n8n webhook retries
+      depth: brief
+      focus_areas:
+        - retry behavior
+    expected_assertions:
+      - type: contains
+        criterion: findings address retry behavior
+      - type: status_equals
+        criterion: success or partial

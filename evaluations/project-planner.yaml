@@ -1,0 +1,27 @@
+eval_id: project-planner-baseline
+agent_id: project-planner
+version: 0.1.0
+description: Baseline scenarios for bounded, draft-only project plans.
+scenarios:
+  - id: bounded-plan
+    description: Create a plan with deliverables, dependencies, risks, and next actions.
+    input:
+      goal: Build a private daily research digest in n8n.
+      constraints:
+        - Do not publish publicly.
+        - Use existing agent-system contracts.
+    expected_assertions:
+      - type: schema_valid
+        criterion: output matches the project plan result contract
+      - type: contains
+        criterion: output distinguishes planned work from completed work
+  - id: missing-goal
+    description: Refuse to invent a plan when the goal is absent.
+    input:
+      constraints:
+        - Complete this quickly.
+    expected_assertions:
+      - type: status_equals
+        criterion: blocked or failure
+      - type: contains
+        criterion: output identifies the missing goal

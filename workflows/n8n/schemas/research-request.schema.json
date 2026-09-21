@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/research-request.schema.json",
+  "title": "ResearchRequest",
+  "type": "object",
+  "required": ["topic"],
+  "properties": {
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "depth": {
+      "type": "string",
+      "enum": ["brief", "standard", "deep"],
+      "default": "standard"
+    },
+    "focus_areas": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

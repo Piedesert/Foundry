@@ -1,0 +1,10 @@
+workflow_id: project-planner
+version: 0.1.0
+name: Project Planner
+agent_id: project-planner
+trigger_type: webhook
+input_schema_ref: workflows/n8n/schemas/project-plan-request.schema.json
+output_schema_ref: workflows/n8n/schemas/project-plan-result.schema.json
+retry_policy:
+  max_attempts: 1
+failure_mode: return_structured_error

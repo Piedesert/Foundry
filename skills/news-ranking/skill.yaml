@@ -1,0 +1,47 @@
+id: news-ranking
+version: 0.1.0
+name: News Ranking and Deduplication
+description: Normalizes, deduplicates, ranks, and limits current news candidates for a concise source-backed digest.
+purpose: Select the most relevant and distinct stories while preserving freshness and provenance.
+applicability:
+  - Scheduled news digests
+  - Topic monitoring
+  - Research candidate selection
+required_inputs:
+  candidates:
+    type: array
+    description: Normalized candidate stories with title, URL, publisher, and publication time when available.
+    required: true
+  preferences:
+    type: object
+    description: Topics, exclusions, geography, and maximum story count.
+    required: true
+procedure:
+  - step: 1
+    action: Normalize candidate metadata
+    details: Ensure every candidate has a stable URL, title, publisher, and freshness data or an explicit missing value.
+  - step: 2
+    action: Deduplicate candidates
+    details: Collapse canonical URL duplicates and near-duplicate coverage of the same event.
+  - step: 3
+    action: Rank candidates
+    details: Apply configured relevance, freshness, source quality, and diversity criteria.
+  - step: 4
+    action: Enforce digest limits
+    details: Return no more than the configured maximum and explain notable exclusions when useful.
+constraints:
+  - Do not invent headlines, publication times, or source metadata.
+  - Prefer source diversity without treating all sources as equally authoritative.
+  - Preserve the original URL and publisher for every selected story.
+  - Do not present a story as current when its publication time is unknown and stale risk is material.
+expected_output:
+  format: structured_json
+  description: Ranked, deduplicated stories with selection rationale and provenance.
+failure_behavior:
+  on_missing_input: Return blocked status and identify missing candidate or preference data.
+  on_ambiguity: Use declared defaults and report them in warnings.
+  on_tool_failure: Preserve successfully normalized candidates and return partial status.
+examples:
+  - title: Collapse duplicate coverage
+    input: Two URLs reporting the same event from different sources.
+    expected_result: One selected story with source diversity noted in provenance.

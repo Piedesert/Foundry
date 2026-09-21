@@ -1,0 +1,36 @@
+{
+  "name": "agent-system",
+  "version": "0.1.0",
+  "description": "Universal, iterative agent and skill framework with cross-model harness adapters and n8n integration",
+  "main": "src/cli.js",
+  "bin": {
+    "agent-system": "./bin/agent-system.js"
+  },
+  "type": "module",
+  "scripts": {
+    "validate": "node bin/agent-system.js validate",
+    "generate": "node bin/agent-system.js generate",
+    "sync": "node bin/agent-system.js sync all",
+    "sync:claude": "node bin/agent-system.js sync claude",
+    "sync:gemini": "node bin/agent-system.js sync gemini",
+    "diff": "node bin/agent-system.js diff",
+    "test": "node --test test/**/*.test.js"
+  },
+  "dependencies": {
+    "yaml": "^2.7.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "agents",
+    "skills",
+    "claude-code",
+    "gemini-cli",
+    "n8n",
+    "llm",
+    "orchestration"
+  ],
+  "author": "",
+  "license": "MIT"
+}

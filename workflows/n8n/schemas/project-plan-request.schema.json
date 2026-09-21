@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/project-plan-request.schema.json",
+  "title": "ProjectPlanRequest",
+  "type": "object",
+  "required": ["goal"],
+  "properties": {
+    "goal": { "type": "string", "minLength": 1 },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "desired_depth": {
+      "type": "string",
+      "enum": ["brief", "standard", "deep"],
+      "default": "standard"
+    }
+  },
+  "additionalProperties": false
+}

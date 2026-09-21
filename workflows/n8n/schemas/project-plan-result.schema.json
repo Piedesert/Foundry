@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/project-plan-result.schema.json",
+  "title": "ProjectPlanResult",
+  "type": "object",
+  "required": ["status", "summary", "deliverables", "dependencies", "risks", "next_actions"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "blocked", "failure"]
+    },
+    "summary": { "type": "string" },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "completion_criteria"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "completion_criteria": { "type": "string" },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "parallelizable": { "type": "boolean" }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}
