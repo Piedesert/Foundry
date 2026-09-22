@@ -1,0 +1,54 @@
+id: skill-design
+version: 0.1.0
+name: Skill Design
+description: Converts a repeatable capability into a narrow, reusable, provider-neutral skill definition.
+purpose: Produce portable skills with explicit inputs, procedures, constraints, failure behavior, and evaluation coverage.
+applicability:
+  - Cross-provider agent design
+  - Developer productivity
+  - Creative production workflows
+  - Personal automation
+required_inputs:
+  capability:
+    type: string
+    description: Repeatable capability to formalize.
+    required: true
+  existing_skills:
+    type: string
+    description: Existing skill catalog to inspect for overlap.
+    required: false
+  constraints:
+    type: array
+    description: Safety, privacy, tool, and portability constraints.
+    required: false
+procedure:
+  - step: 1
+    action: Test reusability
+    details: Confirm the capability applies across multiple tasks, agents, or contexts rather than only one example.
+  - step: 2
+    action: Check for overlap
+    details: Compare the capability with existing skills and choose reuse, composition, revision, or a new skill.
+  - step: 3
+    action: Define the contract
+    details: Specify required inputs, optional context, expected output, tools, constraints, failure behavior, and stop conditions.
+  - step: 4
+    action: Write the procedure
+    details: Express the reasoning as bounded numbered steps that do not rely on hidden provider behavior.
+  - step: 5
+    action: Review portability
+    details: Remove provider-specific syntax and identify runtime capabilities that must be supplied by an adapter or workflow.
+  - step: 6
+    action: Create evaluations
+    details: Cover normal execution, missing input, ambiguity, tool failure, and the most important safety or portability boundary.
+constraints:
+  - Do not duplicate an existing skill without documenting the distinct boundary.
+  - Do not put secrets, credentials, or provider-specific prompt delimiters in a canonical skill.
+  - Do not assume memory, browsing, code execution, or structured output without declaring the dependency.
+  - Keep the skill independently understandable and composable.
+expected_output:
+  format: structured_json
+  description: A validated provider-neutral skill manifest with portability notes, evaluations, assumptions, and next actions.
+failure_behavior:
+  on_missing_input: Identify the smallest missing capability definition needed to proceed.
+  on_ambiguity: State assumptions and narrow the skill boundary rather than generalizing indefinitely.
+  on_tool_failure: Return a draft with unverified overlap or portability areas explicitly marked.

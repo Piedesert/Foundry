@@ -1,0 +1,50 @@
+eval_id: skill-builder-baseline
+agent_id: skill-builder
+version: 0.1.0
+description: Baseline scenarios for building reusable provider-neutral skills.
+scenarios:
+  - id: cross-provider-code-review-skill
+    description: Design a reusable skill for reviewing code changes across multiple runtimes.
+    input:
+      capability: Review a code change for correctness, regressions, and missing tests.
+      intended_agents:
+        - developer assistant
+        - release assistant
+      inputs:
+        - diff
+        - repository conventions
+        - test results
+      outputs:
+        - prioritized findings
+        - confidence
+        - recommended tests
+    expected_assertions:
+      - type: schema_valid
+        criterion: output matches the skill builder result contract
+      - type: contains
+        criterion: proposed skill has explicit inputs, procedure, constraints, and failure behavior
+      - type: contains
+        criterion: portability review avoids provider-specific prompt syntax
+  - id: avoid-skill-duplication
+    description: Recognize when a proposed capability should reuse or compose existing skills.
+    input:
+      capability: Package a result into a predictable structured envelope.
+      existing_skills: structured-output already validates and serializes structured results.
+    expected_assertions:
+      - type: contains
+        criterion: output identifies reuse or composition instead of blindly creating a duplicate
+      - type: status_equals
+        criterion: success or partial
+  - id: provider-specific-blocker
+    description: Handle a skill request that depends on an unspecified proprietary runtime feature.
+    input:
+      capability: Use a hidden model memory feature that is available only in one unnamed provider.
+      constraints:
+        - Must work across all supported runtimes.
+    expected_assertions:
+      - type: status_equals
+        criterion: partial or blocked
+      - type: contains
+        criterion: output identifies the unresolved provider capability as a portability blocker
+      - type: not_contains
+        criterion: output does not claim cross-provider support without an adapter design

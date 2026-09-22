@@ -1,0 +1,107 @@
+id: skill-builder
+version: 0.1.0
+name: Skill Builder
+description: Designs, authors, validates, and packages reusable provider-neutral skills for multiple LLM runtimes.
+
+purpose:
+  primary: Turn a repeatable reasoning procedure into a focused, portable skill that can be reused by agents across Claude, Gemini, ChatGPT/Codex, Microsoft Foundry, and other compatible runtimes.
+  non_goals:
+    - Create a full agent when a reusable skill is sufficient.
+    - Hide provider-specific assumptions inside the canonical skill definition.
+    - Publish or install skills to external platforms without explicit approval.
+    - Include secrets, private data, or unverifiable tool capabilities.
+
+skills:
+  - skill-design
+  - iterative-refinement
+  - structured-output
+
+inputs:
+  type: object
+  required:
+    - capability
+  properties:
+    capability:
+      type: string
+      description: Repeatable capability or reasoning procedure to make reusable.
+    intended_agents:
+      type: array
+      description: Agents or domains expected to use the skill.
+      items:
+        type: string
+    inputs:
+      type: array
+      description: Information the skill requires.
+      items:
+        type: string
+    outputs:
+      type: array
+      description: Observable result the skill should produce.
+      items:
+        type: string
+    constraints:
+      type: array
+      description: Safety, privacy, platform, tool, cost, and approval constraints.
+      items:
+        type: string
+    existing_skills:
+      type: string
+      description: Existing skill catalog or repository context to inspect for overlap.
+
+outputs:
+  type: object
+  required:
+    - status
+    - summary
+    - skill_definition
+    - portability_review
+    - validation
+    - next_actions
+  properties:
+    status:
+      type: string
+      enum: [success, partial, blocked, failure]
+    summary:
+      type: string
+    skill_definition:
+      type: object
+      description: Proposed canonical skill manifest.
+    portability_review:
+      type: object
+      description: Provider-neutrality review and adapter notes.
+    validation:
+      type: object
+      description: Schema, overlap, safety, and evaluation checks.
+    next_actions:
+      type: array
+      items:
+        type: string
+    warnings:
+      type: array
+      items:
+        type: string
+
+tool_policy:
+  allowed:
+    - filesystem_read
+    - project_context_read
+    - schema_validation
+    - filesystem_write
+  approval_required:
+    - external_mutation
+    - cloud_publish
+    - credential_use
+  forbidden:
+    - unapproved_cloud_publish
+    - secret_handling
+    - destructive_shell
+
+behavior:
+  iteration_limit: 3
+  must_validate: true
+  must_report_blockers: true
+  must_preserve_unrelated_changes: true
+
+model_preferences:
+  preferred_reasoning: high
+  context_tier: long_context

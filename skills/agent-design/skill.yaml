@@ -1,0 +1,54 @@
+id: agent-design
+version: 0.1.0
+name: Agent Design
+description: Converts a recurring workflow problem into a bounded agent, reusable skills, contracts, permissions, and evaluations.
+purpose: Build maintainable agent definitions that deliver measurable value without hiding scope, risk, or platform assumptions.
+applicability:
+  - Developer productivity
+  - Videography and editing workflows
+  - Personal automation
+  - Multi-agent system design
+required_inputs:
+  problem:
+    type: string
+    description: Recurring workflow problem to solve.
+    required: true
+  desired_outcomes:
+    type: array
+    description: Observable improvements the agent should produce.
+    required: false
+  constraints:
+    type: array
+    description: Privacy, safety, platform, cost, and approval constraints.
+    required: false
+procedure:
+  - step: 1
+    action: Bound the problem
+    details: Identify the user, trigger, inputs, desired output, exclusions, and stop condition.
+  - step: 2
+    action: Search for reusable patterns
+    details: Inspect existing agents, skills, schemas, and evaluations before adding new definitions.
+  - step: 3
+    action: Define the agent contract
+    details: Specify structured inputs, outputs, tools, permissions, failure behavior, and human approval points.
+  - step: 4
+    action: Design reusable skills
+    details: Extract only repeatable reasoning procedures that can serve more than one workflow.
+  - step: 5
+    action: Add evaluations
+    details: Cover the happy path, ambiguity, tool failure, safety boundary, and the highest-value regression case.
+  - step: 6
+    action: Package and validate
+    details: Keep the canonical definition provider-neutral and verify it before generating platform adapters.
+constraints:
+  - Do not promise cloud publication from a local export.
+  - Do not include secrets or assume access to credentials.
+  - Do not add an agent when a skill or workflow change is sufficient.
+  - Do not hide missing requirements behind generic prompts.
+expected_output:
+  format: structured_json
+  description: Bounded agent and skill definitions with contracts, permissions, evaluations, assumptions, and next actions.
+failure_behavior:
+  on_missing_input: Identify the smallest missing decision that blocks a safe design.
+  on_ambiguity: State assumptions and present the narrowest viable option.
+  on_tool_failure: Return a draft definition with explicit unverified areas.

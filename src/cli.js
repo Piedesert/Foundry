@@ -5,7 +5,7 @@ function usage() {
   return `Usage:
   agent-system validate
   agent-system generate
-  agent-system sync <claude|gemini|all>`;
+  agent-system sync <claude|gemini|chatgpt|all>`;
 }
 
 const [command, argument] = process.argv.slice(2);

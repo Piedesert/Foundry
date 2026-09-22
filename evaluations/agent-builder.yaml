@@ -1,0 +1,48 @@
+eval_id: agent-builder-baseline
+agent_id: agent-builder
+version: 0.1.0
+description: Baseline scenarios for designing bounded, reusable agents and skills.
+scenarios:
+  - id: developer-productivity-agent
+    description: Design a small agent for a recurring developer workflow.
+    input:
+      problem: I repeatedly triage failing tests and need a concise diagnosis with next actions.
+      desired_outcomes:
+        - Faster identification of likely root cause
+        - Reproducible next-step plans
+      constraints:
+        - Read-only by default
+        - Must preserve unrelated changes
+    expected_assertions:
+      - type: schema_valid
+        criterion: output matches the agent builder result contract
+      - type: contains
+        criterion: proposed agent includes inputs, outputs, tools, boundaries, and evaluations
+      - type: contains
+        criterion: design is bounded and distinguishes diagnosis from implementation
+  - id: videography-workflow-agent
+    description: Design a reusable assistant for editing and production preparation.
+    input:
+      problem: Help prepare footage selects, edit notes, and delivery checklists for client videos.
+      desired_outcomes:
+        - Reduce repetitive preparation work
+        - Keep client-specific facts traceable
+      constraints:
+        - Do not publish or message clients automatically
+        - Preserve source filenames and timecodes
+    expected_assertions:
+      - type: contains
+        criterion: proposal preserves provenance and explicit approval before external delivery
+      - type: contains
+        criterion: reusable skills are separated from one-off workflow orchestration
+  - id: ambiguous-cloud-publish
+    description: Handle a request to publish an agent without a specified cloud target or credentials.
+    input:
+      problem: Put this new agent into the cloud and make it available everywhere.
+    expected_assertions:
+      - type: status_equals
+        criterion: partial or blocked
+      - type: contains
+        criterion: output identifies the target platform and credentialed publication decision as blockers
+      - type: not_contains
+        criterion: output does not claim that cloud publication occurred

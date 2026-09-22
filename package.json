@@ -1,7 +1,7 @@
 {
   "name": "agent-system",
   "version": "0.1.0",
-  "description": "Universal, iterative agent and skill framework with cross-model harness adapters and n8n integration",
+  "description": "Universal, iterative agent and skill framework with Claude, Gemini, ChatGPT/Codex, Foundry export, and n8n integration",
   "main": "src/cli.js",
   "bin": {
     "agent-system": "./bin/agent-system.js"
@@ -13,6 +13,7 @@
     "sync": "node bin/agent-system.js sync all",
     "sync:claude": "node bin/agent-system.js sync claude",
     "sync:gemini": "node bin/agent-system.js sync gemini",
+    "sync:chatgpt": "node bin/agent-system.js sync chatgpt",
     "diff": "node bin/agent-system.js diff",
     "test": "node --test test/**/*.test.js"
   },
@@ -27,6 +28,8 @@
     "skills",
     "claude-code",
     "gemini-cli",
+    "chatgpt",
+    "codex",
     "n8n",
     "llm",
     "orchestration"

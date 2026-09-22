@@ -9,6 +9,7 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const adapterTargets = {
   claude: path.resolve(ROOT, "..", ".claude"),
   gemini: path.resolve(ROOT, "..", ".gemini"),
+  chatgpt: path.resolve(ROOT, "..", ".chatgpt"),
 };
 
 const schemaFiles = {
@@ -170,8 +171,28 @@ function renderAgent(agent, system, format) {
     `- Must validate: ${agent.behavior.must_validate}`,
     `- Must report blockers: ${agent.behavior.must_report_blockers}`,
   ].join("\n");
-  const header = format === "gemini" ? `# Gemini Agent: ${agent.name}` : `# ${agent.name}`;
+  const header = format === "gemini"
+    ? `# Gemini Agent: ${agent.name}`
+    : format === "chatgpt"
+      ? `# ChatGPT/Codex Agent: ${agent.name}`
+      : `# ${agent.name}`;
   return `${header}\n\n${agent.description}\n\n${system.trim()}\n\n## Assigned skills\n${skills}\n\n## Allowed tools\n${tools}\n\n## Execution policy\n${policy}\n\n## Output contract\nReturn a structured result with status, summary, result, validation, warnings, errors, and metadata.`;
+}
+
+function renderFoundryAgent(agent, system) {
+  return {
+    schema_version: "0.1.0",
+    source: "agent-system",
+    id: agent.id,
+    name: agent.name,
+    description: agent.description,
+    instructions: system.trim(),
+    tools: agent.tool_policy.allowed,
+    approval_required: agent.tool_policy.approval_required || [],
+    forbidden: agent.tool_policy.forbidden || [],
+    skills: agent.skills,
+    behavior: agent.behavior,
+  };
 }
 
 async function resetDirectory(directory) {
@@ -182,7 +203,7 @@ async function resetDirectory(directory) {
 export async function generate() {
   const { agents, skills } = await validateProject();
   const generated = {};
-  for (const adapter of ["claude", "gemini"]) {
+  for (const adapter of ["claude", "gemini", "chatgpt"]) {
     const outputRoot = path.join(ROOT, "generated", adapter);
     await resetDirectory(outputRoot);
     const skillRoot = path.join(outputRoot, "skills");
@@ -213,6 +234,28 @@ export async function generate() {
     }, null, 2)}\n`, "utf8");
     generated[adapter] = outputRoot;
   }
+  const foundryRoot = path.join(ROOT, "generated", "foundry");
+  await resetDirectory(foundryRoot);
+  const foundryAgentRoot = path.join(foundryRoot, "agents");
+  await fs.mkdir(foundryAgentRoot, { recursive: true });
+  for (const { filePath, manifest } of agents) {
+    const systemPath = path.join(path.dirname(filePath), "system.md");
+    const system = await fs.readFile(systemPath, "utf8");
+    await fs.writeFile(
+      path.join(foundryAgentRoot, `${manifest.id}.json`),
+      `${JSON.stringify(renderFoundryAgent(manifest, system), null, 2)}\n`,
+      "utf8",
+    );
+  }
+  await fs.writeFile(path.join(foundryRoot, "manifest.json"), `${JSON.stringify({
+    generatedAt: new Date().toISOString(),
+    sourceVersion: "0.1.0",
+    adapter: "foundry-export",
+    agents: agents.map(({ manifest }) => manifest.id),
+    skills: skills.map(({ manifest }) => manifest.id),
+    publishRequired: true,
+  }, null, 2)}\n`, "utf8");
+  generated.foundry = foundryRoot;
   return generated;
 }
 
@@ -222,10 +265,10 @@ async function copyDirectory(source, destination) {
 }
 
 export async function sync(adapter) {
-  const adapters = adapter === "all" ? ["claude", "gemini"] : [adapter];
+  const adapters = adapter === "all" ? ["claude", "gemini", "chatgpt"] : [adapter];
   for (const item of adapters) {
     if (!adapterTargets[item]) {
-      throw new Error(`Unknown adapter "${item}". Expected claude, gemini, or all.`);
+      throw new Error(`Unknown adapter "${item}". Expected claude, gemini, chatgpt, or all.`);
     }
   }
   await generate();

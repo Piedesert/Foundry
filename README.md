@@ -1,15 +1,18 @@
 # Agent System
 
-Universal, iterative agent and skill definitions with generated adapters for Claude Code, Gemini CLI, and n8n workflows.
+Universal, iterative agent and skill definitions with generated adapters for Claude Code, Gemini CLI, ChatGPT/Codex CLI, Microsoft Foundry export, and n8n workflows.
 
 ## Source of truth
 
 Author agent manifests under `agents/`, reusable skills under `skills/`, and contracts under `schemas/`. The `generated/` directory is build output and is intentionally ignored by Git.
 
-Generated Claude and Gemini files are synchronized to sibling directories:
+Generated Claude, Gemini, and ChatGPT/Codex files are synchronized to sibling directories:
 
 - `..\.claude` (the `.claude` directory beside this repository)
 - `..\.gemini` (the `.gemini` directory beside this repository)
+- `..\.chatgpt` (the `.chatgpt` directory beside this repository)
+
+Microsoft Foundry artifacts are generated under `generated/foundry/` as portable JSON exports. Publishing to a Foundry project remains an explicit, credentialed deployment step.
 
 ## Commands
 
@@ -22,10 +25,11 @@ npm run generate
 npm run sync
 npm run sync:claude
 npm run sync:gemini
+npm run sync:chatgpt
 npm test
 ```
 
-`validate` checks every agent and skill against its JSON Schema and verifies that agent skill references resolve. `generate` validates first and then renders deterministic adapter files. `sync` regenerates and replaces only the generated adapter destination for the selected harness.
+`validate` checks every agent and skill against its JSON Schema and verifies that agent skill references resolve. `generate` validates first and then renders deterministic adapter files plus a Foundry export. `sync` regenerates and replaces only the generated adapter destination for the selected harness.
 
 ## Adapter layout
 
@@ -46,6 +50,16 @@ Gemini output uses:
 ```
 
 Both adapters include a `manifest.json` identifying the generated source version.
+
+ChatGPT/Codex output uses:
+
+```text
+.chatgpt/
+├── agents/<agent-id>.md
+└── skills/<skill-id>.md
+```
+
+The official OpenAI terminal tool is Codex CLI. Install it separately with `npm install -g @openai/codex`, then run `codex` from a project directory. The generated `.chatgpt` files are local instruction artifacts; they do not create a hosted ChatGPT GPT automatically.
 
 ## n8n
 
@@ -72,3 +86,11 @@ For a concise cross-session summary of implementation status, decisions, n8n obs
 3. Add evaluation scenarios under `evaluations/`.
 4. Run `npm run validate`, `npm run generate`, and `npm test`.
 5. Review generated adapter changes before running `npm run sync`.
+
+## Agent Builder
+
+The `agent-builder` agent is the recommended starting point for new developer, videography, editing, and personal productivity capabilities. Give it a recurring problem and desired outcomes; it should produce a bounded agent, reusable skills, contracts, permissions, evaluations, and next actions. Keep the canonical definitions under `agents/` and `skills/`, then generate the platform adapters.
+
+## Skill Builder
+
+The `skill-builder` agent is for repeatable capabilities that should be shared by multiple agents or runtimes. It checks for overlap with existing skills, defines a provider-neutral contract and procedure, reviews portability across Claude, Gemini, ChatGPT/Codex, Microsoft Foundry, and workflow consumers, and proposes evaluations before adapter generation.
