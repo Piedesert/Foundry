@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/fitness-tracker-entry.schema.json",
+  "title": "FitnessTrackerEntry",
+  "$defs": {
+    "userProvidedValues": {
+      "type": "object",
+      "description": "Scalar values explicitly supplied by the user; no derived values are permitted.",
+      "minProperties": 1,
+      "propertyNames": { "type": "string", "minLength": 1 },
+      "additionalProperties": {
+        "type": ["string", "number", "boolean"]
+      }
+    },
+    "destination": {
+      "type": "string",
+      "enum": ["calorie_tracker", "workout_tracker"]
+    },
+    "trackingInput": {
+      "type": "object",
+      "required": ["destination", "user_provided_values"],
+      "properties": {
+        "destination": { "$ref": "#/$defs/destination" },
+        "user_provided_values": { "$ref": "#/$defs/userProvidedValues" }
+      },
+      "additionalProperties": false
+    },
+    "trackerProposal": {
+      "type": "object",
+      "description": "A preview only. The orchestration layer must obtain separate confirmation before any append.",
+      "required": ["status", "destination", "user_provided_values"],
+      "properties": {
+        "status": { "const": "awaiting_confirmation" },
+        "destination": { "$ref": "#/$defs/destination" },
+        "user_provided_values": { "$ref": "#/$defs/userProvidedValues" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

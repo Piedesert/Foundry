@@ -49,6 +49,78 @@
     "failure_mode": {
       "type": "string",
       "enum": ["return_structured_error", "fail_immediately", "dead_letter_queue"]
+    },
+    "write_policy": {
+      "type": "object",
+      "required": ["mode", "confirmation_required", "retry_uncertain_write"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["none", "append_only", "paper_order"]
+        },
+        "confirmation_required": { "type": "boolean" },
+        "retry_uncertain_write": { "type": "boolean" },
+        "paper_only": { "type": "boolean" },
+        "default_execution_mode": {
+          "type": "string",
+          "enum": ["manual", "confirm_each", "bounded_autonomous"]
+        },
+        "available_execution_modes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["manual", "confirm_each", "bounded_autonomous"]
+          }
+        },
+        "bounded_mode_requires_explicit_activation": { "type": "boolean" },
+        "required_limits": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "max_loss_per_trade_usd",
+              "max_notional_per_order_usd",
+              "max_daily_loss_usd",
+              "max_orders_per_day",
+              "max_contracts_per_order",
+              "allowed_symbols",
+              "kill_switch_available"
+            ]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "mode": { "const": "paper_order" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "required": [
+              "paper_only",
+              "default_execution_mode",
+              "available_execution_modes",
+              "bounded_mode_requires_explicit_activation",
+              "required_limits"
+            ],
+            "properties": {
+              "paper_only": { "const": true },
+              "confirmation_required": { "const": true },
+              "retry_uncertain_write": { "const": false },
+              "default_execution_mode": { "const": "manual" },
+              "available_execution_modes": {
+                "minItems": 1,
+                "contains": { "const": "manual" }
+              },
+              "bounded_mode_requires_explicit_activation": { "const": true },
+              "required_limits": { "minItems": 1 }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

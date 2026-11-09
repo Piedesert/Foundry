@@ -77,6 +77,8 @@ The cross-agent permission, approval, handoff, retry, and audit rules are docume
 
 The n8n-specific topology, sub-workflows, node sequences, error handling, deployment process, and open decisions are documented in [docs/n8n-workflow-architecture.md](docs/n8n-workflow-architecture.md).
 
+The staged Financier agent scope, market-data contracts, paper-only Webull safeguards, and paper-trade learning policy are documented in [docs/finance-agent.md](docs/finance-agent.md).
+
 For a concise cross-session summary of implementation status, decisions, n8n observations, and the next action, see [docs/session-handoff.md](docs/session-handoff.md).
 
 ## Adding an agent

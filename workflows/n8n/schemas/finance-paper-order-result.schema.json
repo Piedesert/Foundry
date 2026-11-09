@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-paper-order-result.schema.json",
+  "title": "FinancePaperOrderResult",
+  "type": "object",
+  "required": ["status", "request_id", "environment", "message", "warnings"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["prepared", "awaiting_confirmation", "rejected", "submitted", "partially_filled", "filled", "cancelled", "unknown", "failure"]
+    },
+    "request_id": { "type": "string" },
+    "environment": { "const": "paper" },
+    "broker_order_id": { "type": ["string", "null"] },
+    "message": { "type": "string" },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

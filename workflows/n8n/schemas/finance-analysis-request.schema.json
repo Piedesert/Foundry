@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-analysis-request.schema.json",
+  "title": "FinanceAnalysisRequest",
+  "type": "object",
+  "required": ["analysis_type", "request_time", "symbols", "user_question", "freshness_policy"],
+  "properties": {
+    "analysis_type": {
+      "type": "string",
+      "enum": ["market_brief", "trade_analysis", "portfolio_review", "paper_trade_review"]
+    },
+    "request_time": { "type": "string", "format": "date-time" },
+    "symbols": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,20}$" }
+    },
+    "user_question": { "type": "string", "minLength": 1, "maxLength": 4000 },
+    "freshness_policy": {
+      "type": "object",
+      "required": ["max_quote_age_seconds", "max_news_age_seconds"],
+      "properties": {
+        "max_quote_age_seconds": { "type": "integer", "minimum": 1 },
+        "max_news_age_seconds": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "time_horizon": {
+      "type": "string",
+      "enum": ["intraday", "days", "weeks", "months", "years", "unspecified"]
+    },
+    "financial_context": {
+      "type": "object",
+      "properties": {
+        "portfolio_value_usd": { "type": "number", "minimum": 0 },
+        "cash_available_usd": { "type": "number", "minimum": 0 },
+        "max_loss_per_trade_usd": { "type": "number", "minimum": 0 },
+        "investment_horizon": { "type": "string", "maxLength": 300 },
+        "risk_tolerance": {
+          "type": "string",
+          "enum": ["low", "moderate", "high", "unspecified"]
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["symbol", "asset_type", "quantity"],
+            "properties": {
+              "symbol": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,20}$" },
+              "asset_type": { "type": "string", "enum": ["stock", "option", "fund", "cash", "other"] },
+              "quantity": { "type": "number" },
+              "cost_basis_usd": { "type": "number", "minimum": 0 },
+              "notes": { "type": "string", "maxLength": 500 },
+              "option_contract": {
+                "type": "object",
+                "required": ["option_type", "expiration", "strike", "multiplier"],
+                "properties": {
+                  "option_type": { "type": "string", "enum": ["call", "put"] },
+                  "expiration": { "type": "string", "format": "date" },
+                  "strike": { "type": "number", "exclusiveMinimum": 0 },
+                  "multiplier": { "type": "integer", "minimum": 1 },
+                  "delta": { "type": "number", "minimum": -1, "maximum": 1 },
+                  "implied_volatility": { "type": "number", "minimum": 0 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "asset_type": { "const": "option" } }, "required": ["asset_type"] },
+                "then": { "required": ["option_contract"] },
+                "else": { "not": { "required": ["option_contract"] } }
+              }
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "market_snapshot": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["symbol", "instrument_type", "observed_at", "source_url", "last_price", "currency"],
+        "properties": {
+          "symbol": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,40}$" },
+          "instrument_type": { "type": "string", "enum": ["stock", "option"] },
+          "observed_at": { "type": "string", "format": "date-time" },
+          "source_url": { "type": "string", "format": "uri" },
+          "last_price": { "type": "number", "exclusiveMinimum": 0 },
+          "bid": { "type": "number", "minimum": 0 },
+          "ask": { "type": "number", "minimum": 0 },
+          "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+          "option_type": { "type": "string", "enum": ["call", "put"] },
+          "expiration": { "type": "string", "format": "date" },
+          "strike": { "type": "number", "exclusiveMinimum": 0 },
+          "delta": { "type": "number", "minimum": -1, "maximum": 1 },
+          "implied_volatility": { "type": "number", "minimum": 0 },
+          "volume": { "type": "integer", "minimum": 0 },
+          "open_interest": { "type": "integer", "minimum": 0 },
+          "multiplier": { "type": "integer", "minimum": 1 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "instrument_type": { "const": "option" } }, "required": ["instrument_type"] },
+            "then": { "required": ["option_type", "expiration", "strike", "bid", "ask", "multiplier"] }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "news_snapshot": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "source_url", "retrieved_at"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "source_url": { "type": "string", "format": "uri" },
+          "published_at": { "type": ["string", "null"], "format": "date-time" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "summary": { "type": "string", "maxLength": 4000 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risk_limits": {
+      "type": "object",
+      "properties": {
+        "max_loss_per_trade_usd": { "type": "number", "minimum": 0 },
+        "max_position_notional_usd": { "type": "number", "minimum": 0 },
+        "max_daily_loss_usd": { "type": "number", "minimum": 0 },
+        "max_open_positions": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

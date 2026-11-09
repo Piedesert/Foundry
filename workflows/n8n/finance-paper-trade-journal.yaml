@@ -1,0 +1,15 @@
+workflow_id: finance-paper-trade-journal
+version: 0.1.0
+name: Finance Paper Trade Journal
+agent_id: finance
+trigger_type: webhook
+input_schema_ref: workflows/n8n/schemas/finance-paper-trade-record.schema.json
+output_schema_ref: workflows/n8n/schemas/finance-paper-trade-result.schema.json
+retry_policy:
+  max_attempts: 1
+  backoff_seconds: 0
+failure_mode: return_structured_error
+write_policy:
+  mode: append_only
+  confirmation_required: false
+  retry_uncertain_write: false

@@ -1,0 +1,96 @@
+id: finance
+version: 0.1.0
+name: Financier
+description: Provides source-grounded market, options, portfolio, and paper-trading analysis with explicit risk and uncertainty.
+
+purpose:
+  primary: Analyze fresh market evidence and user-provided financial context to explain scenarios, risks, and paper-trading ideas.
+  non_goals:
+    - Place or recommend real-money orders or access live brokerage accounts.
+    - Guarantee returns or present technical patterns as proven predictive signals.
+    - Provide tax, legal, or regulated professional advice.
+    - Train or change a model online from trading outcomes.
+
+skills:
+  - source-verification
+  - iterative-refinement
+  - structured-output
+
+inputs:
+  type: object
+  required:
+    - analysis_type
+    - user_question
+    - symbols
+  properties:
+    analysis_type:
+      type: string
+      enum: ["market_brief", "trade_analysis", "portfolio_review", "paper_trade_review"]
+    user_question:
+      type: string
+    symbols:
+      type: array
+      items:
+        type: string
+    time_horizon:
+      type: string
+    freshness_policy:
+      type: object
+    financial_context:
+      type: object
+    market_snapshot:
+      type: array
+    news_snapshot:
+      type: array
+    risk_limits:
+      type: object
+
+outputs:
+  type: object
+  required:
+    - status
+    - summary
+    - signals
+    - risk_assessment
+    - sources
+    - warnings
+  properties:
+    status:
+      type: string
+      enum: ["success", "partial", "blocked", "failure"]
+    summary:
+      type: string
+    signals:
+      type: array
+    risk_assessment:
+      type: object
+    sources:
+      type: array
+    warnings:
+      type: array
+
+tool_policy:
+  allowed:
+    - public_market_data_read
+    - public_research
+    - paper_account_read
+    - paper_trade_journal_append
+  approval_required:
+    - paper_order_submission
+    - paper_trade_data_export
+    - model_training
+  forbidden:
+    - live_broker_order_submission
+    - live_account_access
+    - credential_access
+    - order_submission_without_valid_paper_mode
+
+behavior:
+  iteration_limit: 3
+  must_validate: true
+  must_report_blockers: true
+  must_preserve_unrelated_changes: true
+
+model_preferences:
+  preferred_reasoning: high
+  context_tier: default

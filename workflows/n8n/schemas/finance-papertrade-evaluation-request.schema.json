@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-papertrade-evaluation-request.schema.json",
+  "title": "FinancePapertradeEvaluationRequest",
+  "type": "object",
+  "required": [
+    "run_id",
+    "dataset_id",
+    "dataset_version",
+    "record_ids",
+    "strategy_id",
+    "strategy_version",
+    "baseline_strategy_id",
+    "period",
+    "split",
+    "cost_model",
+    "mode",
+    "allow_model_training"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "dataset_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "dataset_version": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "record_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+    },
+    "strategy_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "strategy_version": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "baseline_strategy_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "period": {
+      "type": "object",
+      "required": ["start_date", "end_date"],
+      "properties": {
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "split": {
+      "type": "object",
+      "required": [
+        "training_end_date",
+        "validation_end_date",
+        "test_start_date",
+        "test_end_date",
+        "out_of_sample_required"
+      ],
+      "properties": {
+        "training_end_date": { "type": "string", "format": "date" },
+        "validation_end_date": { "type": "string", "format": "date" },
+        "test_start_date": { "type": "string", "format": "date" },
+        "test_end_date": { "type": "string", "format": "date" },
+        "out_of_sample_required": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "cost_model": {
+      "type": "object",
+      "required": ["commission_per_contract_usd", "slippage_basis_points", "include_spread_costs"],
+      "properties": {
+        "commission_per_contract_usd": { "type": "number", "minimum": 0 },
+        "slippage_basis_points": { "type": "number", "minimum": 0 },
+        "include_spread_costs": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "mode": { "const": "offline_strategy_evaluation" },
+    "allow_model_training": { "const": false }
+  },
+  "additionalProperties": false
+}

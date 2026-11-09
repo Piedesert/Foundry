@@ -1,11 +1,15 @@
 workflow_id: personal-fitness-trainer
-version: 0.1.0
+version: 0.2.0
 name: Personal Fitness Trainer
 agent_id: personal-fitness-trainer
 trigger_type: webhook
 input_schema_ref: workflows/n8n/schemas/fitness-request.schema.json
 output_schema_ref: workflows/n8n/schemas/fitness-result.schema.json
 retry_policy:
-  max_attempts: 2
-  backoff_seconds: 10
+  max_attempts: 1
+  backoff_seconds: 0
 failure_mode: return_structured_error
+write_policy:
+  mode: append_only
+  confirmation_required: true
+  retry_uncertain_write: false

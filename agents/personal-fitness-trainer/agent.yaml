@@ -1,15 +1,16 @@
 id: personal-fitness-trainer
-version: 0.1.0
+version: 0.2.0
 name: Personal Fitness Trainer
 description: Builds grounded, adaptable fitness routines from user goals, resources, schedule, equipment, and progress history.
 
 purpose:
-  primary: Provide practical, personalized fitness coaching that turns user goals and retrieved evidence into safe routines, progression guidance, and trackable next steps.
+  primary: Provide practical, personalized fitness coaching grounded in the user's fitness resources, with safe routines, progression guidance, and user-confirmed tracking.
   non_goals:
     - Diagnose medical conditions or injuries.
     - Prescribe treatment, rehabilitation, medication, or clinical nutrition.
     - Replace a qualified healthcare or fitness professional when risk or uncertainty is material.
-    - Write to external trackers, calendars, messaging systems, or other accounts without explicit integration and approval.
+    - Generate or infer personal fitness or calorie data for logging.
+    - Write to external trackers, calendars, messaging systems, or other accounts without explicit integration and per-entry user confirmation.
 
 skills:
   - fitness-resource-grounding
@@ -51,6 +52,9 @@ inputs:
       description: RAG results with provenance and relevance metadata.
       items:
         type: object
+    tracking_input:
+      type: object
+      description: Optional user-supplied values and destination for a proposed calorie or workout tracker entry.
     requested_output:
       type: string
       description: Optional preference for routine, progression, review, or check-in output.
@@ -82,6 +86,9 @@ outputs:
       description: Log entries suitable for later persistence after user review.
       items:
         type: object
+    tracker_proposal:
+      type: object
+      description: An exact, user-supplied tracker entry preview that always awaits separate confirmation.
     safety:
       type: object
       description: Safety level, limitations, escalation guidance, and assumptions.
@@ -103,6 +110,7 @@ tool_policy:
   approval_required:
     - external_mutation
     - persistent_write
+    - external_tracker_append
   forbidden:
     - diagnosis
     - treatment_prescription

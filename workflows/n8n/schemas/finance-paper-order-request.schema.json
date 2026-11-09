@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-paper-order-request.schema.json",
+  "title": "FinancePaperOrderRequest",
+  "type": "object",
+  "required": [
+    "request_id",
+    "action",
+    "execution_mode",
+    "environment",
+    "symbol",
+    "instrument_type",
+    "position_action",
+    "quantity",
+    "order_type",
+    "limit_price",
+    "quote_observed_at",
+    "quote_source_url",
+    "risk_policy",
+    "idempotency_key"
+  ],
+  "properties": {
+    "request_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "action": { "type": "string", "enum": ["prepare", "submit"] },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["manual", "confirm_each", "bounded_autonomous"],
+      "default": "manual"
+    },
+    "environment": { "const": "paper" },
+    "symbol": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,40}$" },
+    "instrument_type": { "type": "string", "enum": ["stock", "option"] },
+    "position_action": { "type": "string", "enum": ["open_long", "close_long"] },
+    "quantity": { "type": "integer", "minimum": 1 },
+    "order_type": { "const": "limit" },
+    "limit_price": { "type": "number", "exclusiveMinimum": 0 },
+    "quote_observed_at": { "type": "string", "format": "date-time" },
+    "quote_source_url": { "type": "string", "format": "uri" },
+    "option_contract": {
+      "type": "object",
+      "required": ["option_type", "expiration", "strike", "multiplier"],
+      "properties": {
+        "option_type": { "type": "string", "enum": ["call", "put"] },
+        "expiration": { "type": "string", "format": "date" },
+        "strike": { "type": "number", "exclusiveMinimum": 0 },
+        "multiplier": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "risk_policy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "max_loss_per_trade_usd",
+        "max_notional_per_order_usd",
+        "max_daily_loss_usd",
+        "max_orders_per_day",
+        "max_contracts_per_order"
+      ],
+      "properties": {
+        "policy_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "max_loss_per_trade_usd": { "type": "number", "exclusiveMinimum": 0 },
+        "max_notional_per_order_usd": { "type": "number", "exclusiveMinimum": 0 },
+        "max_daily_loss_usd": { "type": "number", "exclusiveMinimum": 0 },
+        "max_orders_per_day": { "type": "integer", "minimum": 1 },
+        "max_contracts_per_order": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "approval": {
+      "type": "object",
+      "required": ["request_id", "payload_digest", "confirmed_at"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "payload_digest": { "type": "string", "minLength": 1 },
+        "confirmed_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "standing_policy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "payload_digest",
+        "activated_at",
+        "expires_at",
+        "max_orders_per_day",
+        "max_notional_per_order_usd",
+        "max_daily_loss_usd",
+        "max_contracts_per_order",
+        "kill_switch_available",
+        "kill_switch_active"
+      ],
+      "properties": {
+        "policy_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "payload_digest": { "type": "string", "minLength": 1 },
+        "activated_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "max_orders_per_day": { "type": "integer", "minimum": 1 },
+        "max_notional_per_order_usd": { "type": "number", "exclusiveMinimum": 0 },
+        "max_daily_loss_usd": { "type": "number", "exclusiveMinimum": 0 },
+        "max_contracts_per_order": { "type": "integer", "minimum": 1 },
+        "allowed_symbols": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,40}$" }
+        },
+        "kill_switch_available": { "const": true },
+        "kill_switch_active": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "idempotency_key": { "type": "string", "minLength": 1, "maxLength": 200 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "instrument_type": { "const": "option" } }, "required": ["instrument_type"] },
+      "then": { "required": ["option_contract"] },
+      "else": { "not": { "required": ["option_contract"] } }
+    },
+    {
+      "if": { "properties": { "execution_mode": { "const": "manual" } }, "required": ["execution_mode"] },
+      "then": { "properties": { "action": { "const": "prepare" } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_mode": { "const": "confirm_each" },
+          "action": { "const": "submit" }
+        },
+        "required": ["execution_mode", "action"]
+      },
+      "then": { "required": ["approval"] }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution_mode": { "const": "bounded_autonomous" },
+          "action": { "const": "submit" }
+        },
+        "required": ["execution_mode", "action"]
+      },
+      "then": { "required": ["standing_policy"] }
+    }
+  ],
+  "additionalProperties": false
+}

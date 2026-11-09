@@ -14,7 +14,7 @@ This is a planning tool, not a fixed build order. Ratings are provisional and sh
 
 | Agent | Family | Value | MVP effort | Risk | Reuse | Verification | Key dependencies | Safe first MVP | Likely shared infrastructure |
 |---|---|---:|---:|---:|---:|---:|---|---|---|
-| Financier | Knowledge / decision | 4 | 3 | 5 | 4 | 4 | Fresh market/news data, watchlists, source provenance, portfolio context | Read-only market and watchlist briefing with timestamps and uncertainty | Scheduled research, data freshness, citations, approval gates |
+| Financier | Knowledge / decision | 4 | 3 | 5 | 4 | 4 | Fresh market/news data, watchlists, source provenance, user-provided portfolio context | Cited market/options analysis, private alerts, and paper-trade journaling; paper orders are separately gated | Scheduled research, data freshness, citations, approval gates, paper-trade evaluation |
 | Code Reviewer | Software / operations | 5 | 2 | 3 | 5 | 2 | Repository access, diffs, test output | Review a supplied diff and produce findings with severity and evidence | Structured review output, iterative refinement, repository inspection |
 | Development Leader | Software / operations | 5 | 4 | 4 | 5 | 3 | Code tools, test runner, issue context, approval workflow | Plan and critique a proposed change; no direct writes | Task decomposition, handoffs, validation, approval gates |
 | Media Manager | Media / content | 4 | 5 | 4 | 4 | 3 | DVD tooling, codecs, NAS, metadata providers, duplicate detection | Inspect and propose Jellyfin names/locations; approval before moves | File intake, metadata extraction, idempotent file operations |

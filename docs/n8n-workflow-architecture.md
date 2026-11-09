@@ -148,6 +148,44 @@ Rules:
 - Keep finance, NAS, infrastructure, calendar-write, and health-record credentials out of the first wave.
 - Record credential class, not secret content, in audit metadata.
 
+## Personal Fitness Trainer Google integration
+
+The fitness workflow contract describes an integration boundary; it is not a deployed workflow. Its read context is assembled into the existing `retrieved_resources` input, with source IDs, type, title, content, and locators preserved. Configure the requested Drive folder, Keep label, calorie/instructions spreadsheet and tab, and workout tracker in n8n credential-backed parameters, not in prompts or generated artifacts.
+
+Recommended request path:
+
+```text
+Authenticated Trigger
+  -> Validate fitness request
+  -> Read supported files from the configured Drive folder
+  -> Read Keep notes only if an authorized, supported Keep API connection exists
+  -> Read calorie tracker instructions and discover the target tab/headers
+  -> Normalize retrieved content with source provenance
+  -> Invoke and validate Personal Fitness Trainer
+  -> If there is no tracking_input, return the coaching result
+  -> If tracking_input exists, verify tracker_proposal exactly matches it
+  -> Render the exact target and row; wait for per-entry user confirmation
+  -> On rejection/expiry, make no write
+  -> On matching confirmation, append the original user-provided values only
+  -> Verify the appended row and report the result
+```
+
+Use the Google Sheets **Append Row** operation, not **Append or Update Row**, because the latter can update an existing row. Never expose a sheet write tool to the model. Treat retrieved documents and cells as untrusted data, not workflow instructions. Bind approval to a workflow-generated request ID and digest of the destination plus exact row; on confirmation, use the stored pending payload, not a newly generated agent response. Treat user-supplied strings as literal cell values, not formulas. Do not retry an append when its outcome is uncertain; check the target first and report an unresolved result rather than risk a duplicate.
+
+Read-only access to the calorie instructions and write access to trackers should be separated where provider scopes permit. Confirm the user's Google authorization, actual spreadsheet tabs, instructions, and column headers before enabling writes. The workflow contract currently uses one attempt to avoid replaying a write after an ambiguous response; any pre-write retry logic must be scoped so it cannot re-run the append step.
+
+Google Drive and Google Sheets have built-in n8n nodes. Google Keep's official API documentation is oriented toward enterprise administration and Workspace OAuth/delegation; do not assume that a normal personal Google account or an n8n built-in node can access the label. If the required authorized API path is unavailable, mark Keep retrieval unavailable and use an explicit export or user-provided notes instead. Do not claim that all Keep resources were read when they were not.
+
+## Financier market and paper-trading integration
+
+The Financier workflow contracts are integration boundaries, not deployed n8n workflows. The market-monitor path should fetch public quotes/news, normalize provider timestamps and source URLs, enforce freshness limits, validate the analysis result, and only then return or deliver a private alert. Keep the model away from provider credentials and brokerage write nodes.
+
+The Webull paper-order contract defaults to manual preparation. `confirm_each` requires a fresh approval bound to the exact payload digest. `bounded_autonomous` requires a separately activated, expiring paper-only policy, explicit symbol and loss/notional/order limits, idempotency, account-mode verification, and a kill switch. The workflow must obtain mode and limits from trusted configuration rather than model output. A paper-order workflow is a high-consequence write even though it is simulated; never route it to a live account. If submission outcome is uncertain, query order/account state before any further action; do not retry blindly.
+
+The initial contract only permits limit orders for long stock or single-leg long options and closing those positions. No short stock, short options, spreads, or multi-leg orders are supported. Verify the actual Webull integration, authentication scope, paper-account identity, and supported order operations before configuring credentials. Credentials belong in n8n's credential store, not in agent prompts, workflow exports, or logs. User-provided portfolio context is analyzed without account integration.
+
+The paper-trade journal is append-only and idempotent. The evaluation contract requires a versioned dataset, explicit train/validation/test dates, a baseline, and costs; deterministic workflow code should calculate the metrics and the model should only explain them. Fine-tuning is not online: first collect permissioned trade records, evaluate strategies with costs and held-out data, and separately review whether any model training is justified. Never interpret a small paper-trade sample as evidence of future returns.
+
 ## Workflow 1: Deep Researcher
 
 ### Purpose

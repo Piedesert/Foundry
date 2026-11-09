@@ -114,6 +114,12 @@ Observe → Analyze → Recommend → Draft → Execute approved → Execute bou
 
 No first-wave agent needs Level 4 or higher.
 
+### Financier follow-on
+
+The Financier agent is now a separate, staged portfolio track rather than a first-wave agent. Its canonical manifest, schemas, evaluation cases, and n8n workflow contracts cover public-market analysis, user-provided financial context, private alerts, paper-trade journaling, and Webull paper-only order requests. Manual order preparation is the default; optional submission modes require explicit approval or a bounded paper-only policy. Real-money trading and live account access are forbidden.
+
+The contracts are not deployed n8n workflows. The user reports that a supported Webull paper integration is available, but its endpoint, credential scopes, account-mode verification, and order capabilities still need verification before any submission workflow is configured. Paper-trade records are intended for offline evaluation first; direct model fine-tuning is deferred until data quality, privacy, and held-out evaluation are addressed.
+
 ## Relevant files
 
 Planning:

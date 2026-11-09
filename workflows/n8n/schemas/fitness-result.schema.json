@@ -47,6 +47,9 @@
       "type": "array",
       "items": { "$ref": "fitness-progress-entry.schema.json" }
     },
+    "tracker_proposal": {
+      "$ref": "fitness-tracker-entry.schema.json#/$defs/trackerProposal"
+    },
     "safety": {
       "type": "object",
       "required": ["level", "limitations"],

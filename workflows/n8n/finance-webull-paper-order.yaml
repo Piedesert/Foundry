@@ -1,0 +1,30 @@
+workflow_id: finance-webull-paper-order
+version: 0.1.0
+name: Finance Webull Paper Order
+agent_id: finance
+trigger_type: manual
+input_schema_ref: workflows/n8n/schemas/finance-paper-order-request.schema.json
+output_schema_ref: workflows/n8n/schemas/finance-paper-order-result.schema.json
+retry_policy:
+  max_attempts: 1
+  backoff_seconds: 0
+failure_mode: return_structured_error
+write_policy:
+  mode: paper_order
+  confirmation_required: true
+  retry_uncertain_write: false
+  paper_only: true
+  default_execution_mode: manual
+  available_execution_modes:
+    - manual
+    - confirm_each
+    - bounded_autonomous
+  bounded_mode_requires_explicit_activation: true
+  required_limits:
+    - max_loss_per_trade_usd
+    - max_notional_per_order_usd
+    - max_daily_loss_usd
+    - max_orders_per_day
+    - max_contracts_per_order
+    - allowed_symbols
+    - kill_switch_available

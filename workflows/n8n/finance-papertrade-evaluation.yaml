@@ -1,0 +1,11 @@
+workflow_id: finance-papertrade-evaluation
+version: 0.1.0
+name: Finance Paper Trade Evaluation
+agent_id: finance
+trigger_type: manual
+input_schema_ref: workflows/n8n/schemas/finance-papertrade-evaluation-request.schema.json
+output_schema_ref: workflows/n8n/schemas/finance-papertrade-evaluation-result.schema.json
+retry_policy:
+  max_attempts: 1
+  backoff_seconds: 0
+failure_mode: return_structured_error

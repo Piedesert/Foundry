@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-paper-trade-record.schema.json",
+  "title": "FinancePaperTradeRecord",
+  "type": "object",
+  "required": [
+    "record_id",
+    "idempotency_key",
+    "provider",
+    "environment",
+    "status",
+    "instrument_type",
+    "symbol",
+    "position_action",
+    "quantity",
+    "entry_price",
+    "entry_time",
+    "currency",
+    "strategy_id",
+    "thesis",
+    "source_run_id",
+    "source_ids"
+  ],
+  "properties": {
+    "record_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "idempotency_key": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "provider": { "type": "string", "enum": ["webull", "manual"] },
+    "environment": { "const": "paper" },
+    "status": { "type": "string", "enum": ["open", "closed", "cancelled"] },
+    "instrument_type": { "type": "string", "enum": ["stock", "option"] },
+    "symbol": { "type": "string", "pattern": "^[A-Za-z0-9.^-]{1,40}$" },
+    "position_action": { "type": "string", "enum": ["open_long", "close_long"] },
+    "quantity": { "type": "integer", "minimum": 1 },
+    "entry_price": { "type": "number", "exclusiveMinimum": 0 },
+    "entry_time": { "type": "string", "format": "date-time" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "option_contract": {
+      "type": "object",
+      "required": ["option_type", "expiration", "strike", "multiplier", "delta_at_entry"],
+      "properties": {
+        "option_type": { "type": "string", "enum": ["call", "put"] },
+        "expiration": { "type": "string", "format": "date" },
+        "strike": { "type": "number", "exclusiveMinimum": 0 },
+        "multiplier": { "type": "integer", "minimum": 1 },
+        "delta_at_entry": { "type": "number", "minimum": -1, "maximum": 1 },
+        "implied_volatility": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "exit_price": { "type": "number", "exclusiveMinimum": 0 },
+    "exit_time": { "type": "string", "format": "date-time" },
+    "realized_pnl_usd": { "type": "number" },
+    "fees_usd": { "type": "number", "minimum": 0 },
+    "strategy_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "thesis": { "type": "string", "minLength": 1, "maxLength": 4000 },
+    "source_run_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "source_ids": { "type": "array", "items": { "type": "string" } },
+    "quote_observed_at": { "type": "string", "format": "date-time" },
+    "broker_order_id": { "type": "string", "maxLength": 200 },
+    "model_version": { "type": "string", "maxLength": 120 },
+    "notes": { "type": "string", "maxLength": 2000 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "instrument_type": { "const": "option" } }, "required": ["instrument_type"] },
+      "then": { "required": ["option_contract"] },
+      "else": { "not": { "required": ["option_contract"] } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "closed" } }, "required": ["status"] },
+      "then": { "required": ["exit_price", "exit_time", "realized_pnl_usd"] }
+    },
+    {
+      "if": { "properties": { "status": { "const": "open" } }, "required": ["status"] },
+      "then": {
+        "not": {
+          "anyOf": [
+            { "required": ["exit_price"] },
+            { "required": ["exit_time"] },
+            { "required": ["realized_pnl_usd"] }
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

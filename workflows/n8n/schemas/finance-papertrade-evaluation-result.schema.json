@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-papertrade-evaluation-result.schema.json",
+  "title": "FinancePapertradeEvaluationResult",
+  "type": "object",
+  "required": [
+    "status",
+    "run_id",
+    "dataset_id",
+    "sample_size",
+    "strategy_metrics",
+    "baseline_metrics",
+    "validation",
+    "limitations",
+    "warnings"
+  ],
+  "properties": {
+    "status": { "type": "string", "enum": ["success", "partial", "blocked", "failure"] },
+    "run_id": { "type": "string" },
+    "dataset_id": { "type": "string" },
+    "sample_size": { "type": "integer", "minimum": 0 },
+    "strategy_metrics": { "$ref": "#/$defs/metrics" },
+    "baseline_metrics": { "$ref": "#/$defs/metrics" },
+    "validation": {
+      "type": "object",
+      "required": ["out_of_sample_completed", "leakage_check", "model_training_performed"],
+      "properties": {
+        "out_of_sample_completed": { "type": "boolean" },
+        "leakage_check": { "type": "string", "enum": ["passed", "failed", "inconclusive"] },
+        "model_training_performed": { "const": false },
+        "reproducibility_reference": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "success" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "sample_size": { "minimum": 1 },
+          "validation": {
+            "properties": {
+              "out_of_sample_completed": { "const": true },
+              "leakage_check": { "const": "passed" }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "metrics": {
+      "type": "object",
+      "required": ["net_return_pct", "maximum_drawdown_pct", "win_rate_pct", "expectancy_usd", "trade_count"],
+      "properties": {
+        "net_return_pct": { "type": ["number", "null"] },
+        "maximum_drawdown_pct": { "type": ["number", "null"] },
+        "win_rate_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "expectancy_usd": { "type": ["number", "null"] },
+        "trade_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

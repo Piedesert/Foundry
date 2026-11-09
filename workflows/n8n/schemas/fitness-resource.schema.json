@@ -8,11 +8,12 @@
     "resource_id": { "type": "string", "minLength": 1 },
     "source_type": {
       "type": "string",
-      "enum": ["pdf", "article", "book", "training_note", "progress_log", "web_link", "other"]
+      "enum": ["pdf", "article", "book", "training_note", "progress_log", "web_link", "google_drive_file", "google_keep_note", "google_sheet_instruction", "other"]
     },
     "title": { "type": "string", "minLength": 1 },
     "author_or_owner": { "type": "string" },
     "locator": { "type": "string" },
+    "source_uri": { "type": "string" },
     "content": { "type": "string", "minLength": 1 },
     "published_at": { "type": "string" },
     "retrieved_at": { "type": "string" },

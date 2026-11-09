@@ -110,7 +110,7 @@ The first wave is successful if it answers these questions:
 
 - Autonomous publishing or messaging.
 - Calendar, task manager, or project tracker writes.
-- Financial recommendations or trades.
+- Financial recommendations or trades inside the first-wave agents. The separate Financier follow-on is now defined in [Financier agent plan](finance-agent.md), with paper-only trading and explicit execution safeguards.
 - Broad Personal Assistant routing.
 - Long-term memory beyond the minimum state needed for a workflow.
 - Vector search or RAG infrastructure unless the first-wave evaluations show a clear need.

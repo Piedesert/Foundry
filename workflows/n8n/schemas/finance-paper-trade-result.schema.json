@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.agent-system.local/finance-paper-trade-result.schema.json",
+  "title": "FinancePaperTradeResult",
+  "type": "object",
+  "required": ["status", "record_id", "message", "warnings"],
+  "properties": {
+    "status": { "type": "string", "enum": ["recorded", "duplicate", "rejected", "failure", "unknown"] },
+    "record_id": { "type": "string" },
+    "message": { "type": "string" },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

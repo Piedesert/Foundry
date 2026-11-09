@@ -62,9 +62,12 @@
       "type": "array",
       "items": { "$ref": "fitness-resource.schema.json" }
     },
+    "tracking_input": {
+      "$ref": "fitness-tracker-entry.schema.json#/$defs/trackingInput"
+    },
     "requested_output": {
       "type": "string",
-      "enum": ["routine", "progress_review", "adaptation", "check_in_template", "general_guidance"]
+      "enum": ["routine", "progress_review", "adaptation", "check_in_template", "general_guidance", "log_entry"]
     }
   },
   "additionalProperties": false
