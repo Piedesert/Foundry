@@ -1,14 +1,15 @@
 id: agent-builder
-version: 0.1.0
+version: 0.2.0
 name: Agent Builder
-description: Designs, authors, validates, and packages reusable agents and skills from a bounded problem statement.
+description: Plans bounded agents and drafts reviewable agent and skill definitions without applying repository changes.
 
 purpose:
-  primary: Turn a user's recurring problem into maintainable agent and skill definitions that can be validated in the canonical repository and exported to supported runtimes.
+  primary: Turn a user's recurring problem into a decision-ready agent plan, then provide optional candidate definitions for the user to apply and validate.
   non_goals:
     - Publish agents to a cloud environment without explicit approval and credentials.
     - Invent integrations, tools, permissions, or success criteria not supported by the request.
     - Replace domain experts for safety-critical requirements.
+    - Write or modify canonical repository files or generated artifacts.
 
 skills:
   - agent-design
@@ -23,6 +24,11 @@ inputs:
     problem:
       type: string
       description: Recurring problem or workflow the proposed agent should improve.
+    mode:
+      type: string
+      enum: [plan, definition_proposal]
+      description: Plan is the default; return candidate definitions only when explicitly requested.
+      default: plan
     users:
       type: array
       description: Intended users and stakeholders.
@@ -52,8 +58,7 @@ outputs:
   required:
     - status
     - summary
-    - agent_definition
-    - skill_definitions
+    - plan
     - validation
     - next_actions
   properties:
@@ -62,17 +67,25 @@ outputs:
       enum: [success, partial, blocked, failure]
     summary:
       type: string
+    plan:
+      type: object
+      description: Chat-ready design plan covering purpose, persona, users, trigger, inputs, outputs, tools/data, shared capabilities, overlap, permissions, failure behavior, open decisions, dependencies, evaluations, and next action.
+    alternatives:
+      type: array
+      description: Materially different viable designs and their tradeoffs.
+      items:
+        type: object
     agent_definition:
       type: object
-      description: Proposed canonical agent manifest and system behavior.
+      description: Optional candidate manifest and system behavior returned in chat only when requested.
     skill_definitions:
       type: array
-      description: Proposed reusable skill manifests.
+      description: Optional candidate reusable skill manifests returned in chat only when requested.
       items:
         type: object
     validation:
       type: object
-      description: Schema, safety, scope, and evaluation checks.
+      description: Design and safety checks; distinguish proposal review from schema validation, repository tests, and deployment.
     next_actions:
       type: array
       items:
@@ -87,12 +100,13 @@ tool_policy:
     - filesystem_read
     - project_context_read
     - schema_validation
-    - filesystem_write
   approval_required:
     - external_mutation
     - cloud_publish
     - credential_use
   forbidden:
+    - filesystem_write
+    - generated_artifact_write
     - unapproved_cloud_publish
     - secret_handling
     - destructive_shell

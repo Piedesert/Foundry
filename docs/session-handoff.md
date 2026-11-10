@@ -12,32 +12,28 @@ Generated harness outputs are synchronized to sibling directories:
 
 - `C:\Users\nickg\OneDrive\Documents\Code\AI\.claude`
 - `C:\Users\nickg\OneDrive\Documents\Code\AI\.gemini`
+- `C:\Users\nickg\OneDrive\Documents\Code\AI\.chatgpt`
 
 ## Current implementation status
 
-The repository currently contains:
+Last verified on 2026-11-09, the repository contains:
 
-- 3 canonical agents:
+- 7 validated canonical agents:
+  - `agent-builder`
+  - `finance`
+  - `news-rundown`
+  - `personal-fitness-trainer`
+  - `project-planner`
   - `research`
-  - `news-rundown`
-  - `project-planner`
-- 5 reusable skills:
-  - `source-verification`
-  - `iterative-refinement`
-  - `structured-output`
-  - `news-ranking`
-  - `planning-decomposition`
+  - `skill-builder`
+- 11 reusable skills.
 - JSON Schemas for agents, skills, workflows, evaluations, request payloads, result payloads, and execution envelopes.
-- 4 n8n workflow contracts:
-  - `deep-researcher`
-  - `research-and-verify`
-  - `news-rundown`
-  - `project-planner`
-- 3 evaluation datasets:
-  - Research
-  - News Rundown
-  - Project Planner
-- Claude and Gemini adapter generation and synchronization.
+- 9 n8n workflow contracts. These are specifications, not evidence that corresponding workflows are deployed or working.
+  - `deep-researcher`, `research-and-verify`, `news-rundown`, `project-planner`
+  - `finance-market-monitor`, `finance-paper-trade-journal`, `finance-papertrade-evaluation`, `finance-webull-paper-order`
+  - `personal-fitness-trainer`
+- 7 YAML evaluation datasets, including Agent Builder and Skill Builder baselines.
+- Claude, Gemini, ChatGPT/Codex adapter generation and a Microsoft Foundry JSON export. Hosted publication remains a separate explicit operation.
 - Validator checks for:
   - Agent and skill schemas
   - Workflow and evaluation schemas
@@ -45,33 +41,39 @@ The repository currently contains:
   - Workflow-to-agent references
   - Workflow schema-file references
   - Duplicate IDs
+- `agents/code-reviewer/` is only a placeholder folder with evaluation material; it has no canonical `agent.yaml` or system instructions.
 
 ## Verification status
 
-Last verified from `agent_system`:
+Verified from the repository:
 
 ```text
-npm run validate
-Valid: 3 agent(s), 5 skill(s).
+npm.cmd run validate
+Valid: 7 agent(s), 11 skill(s).
 
-npm test
-2 tests passed, 0 failed
+npm.cmd test
+9 tests passed, 0 failed
 ```
 
 Useful commands:
 
 ```text
-npm run validate
-npm test
-npm run generate
-npm run sync
-npm run sync:claude
-npm run sync:gemini
+npm.cmd run validate
+npm.cmd test
+npm.cmd run generate
+npm.cmd run sync
+npm.cmd run sync:claude
+npm.cmd run sync:gemini
+npm.cmd run sync:chatgpt
 ```
 
-Generated output is ignored by Git. The repository itself has not been committed yet.
+The YAML evaluation datasets are schema-validated, but there is no dedicated model-evaluation runner in the package scripts. Follow `docs/builder-evaluation.md` for the manual Builder scenario review. Generated output is ignored by Git.
 
 ## Strategic decisions
+
+### Immediate Foundry priority
+
+The next build-out is to make Agent Builder plan new agents and Skill Builder diagnose/propose reusable skill improvements. Both default to structured chat plans and return candidate definitions only when requested. Builders must not write canonical files, generated adapters, n8n workflows, or hosted agents; the user applies accepted changes manually. Live n8n workflow work is deferred until the user returns to it.
 
 ### First-wave portfolio
 
@@ -143,19 +145,19 @@ n8n contracts:
 - `workflows/n8n/project-planner.yaml`
 - `workflows/n8n/research-and-verify.yaml`
 
-## Current n8n integration target
+## Historical n8n observations (not verified current)
 
 n8n endpoint:
 
 `http://n8n.wampus-diminished.ts.net:5678/home/workflows`
 
-Target workflow:
+Workflow visible in an earlier browser observation:
 
 - Name: `News Room`
 - Workflow ID observed in the browser URL: `sQRRRrQ7IFzMj7h5`
 - Project: `Personal`
 
-### Observed current News Room structure
+### Previously observed News Room structure
 
 News path:
 
@@ -213,9 +215,9 @@ candidate set → one bounded digest of up to five distinct stories
 
 Preserve the existing internet-status branch.
 
-## n8n access issue
+## Historical n8n access issue
 
-The workflow canvas was visible in the shared browser session, but the underlying n8n API repeatedly returned:
+At the time of the earlier observation, the workflow canvas was visible in the shared browser session, but the underlying n8n API repeatedly returned:
 
 ```text
 401 Unauthorized
@@ -230,7 +232,7 @@ Observed endpoints:
 
 Executing the RSS node also failed with `Unauthorized`.
 
-Therefore:
+That observation established only that:
 
 - No n8n workflow was modified.
 - No workflow was saved or published.
@@ -239,9 +241,9 @@ Therefore:
 
 The next session should first verify that the shared browser session has a valid authenticated n8n API state.
 
-## Exact next action
+## Deferred n8n next action
 
-After n8n authentication is working:
+When the user chooses to resume workflow work, first verify current n8n authentication, version, projects, workflows, nodes, and credential scopes. Do not rely on the historical workflow details above. If the `News Room` target is still current and the user approves editing it, then:
 
 1. Read the `RSS Read` node output using a manual execution.
 2. Confirm actual field names for title, URL, publication date, content, and publisher.

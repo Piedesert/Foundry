@@ -1,8 +1,8 @@
 id: agent-design
-version: 0.1.0
+version: 0.2.0
 name: Agent Design
-description: Converts a recurring workflow problem into a bounded agent, reusable skills, contracts, permissions, and evaluations.
-purpose: Build maintainable agent definitions that deliver measurable value without hiding scope, risk, or platform assumptions.
+description: Converts a recurring workflow problem into a decision-ready plan for a bounded agent, skills, contracts, permissions, and evaluations.
+purpose: Plan maintainable agent capabilities with measurable value while exposing scope, risk, overlap, and platform assumptions.
 applicability:
   - Developer productivity
   - Videography and editing workflows
@@ -23,32 +23,34 @@ required_inputs:
     required: false
 procedure:
   - step: 1
-    action: Bound the problem
-    details: Identify the user, trigger, inputs, desired output, exclusions, and stop condition.
+    action: Clarify the problem
+    details: Identify the user, trigger, desired outcome, inputs, output, exclusions, and stop condition; ask when a missing decision materially affects scope or risk.
   - step: 2
     action: Search for reusable patterns
     details: Inspect existing agents, skills, schemas, and evaluations before adding new definitions.
   - step: 3
-    action: Define the agent contract
-    details: Specify structured inputs, outputs, tools, permissions, failure behavior, and human approval points.
+    action: Compare solution shapes
+    details: Consider an agent, skill-only change, workflow-only change, reuse, or no build; explain material tradeoffs and overlaps.
   - step: 4
-    action: Design reusable skills
-    details: Extract only repeatable reasoning procedures that can serve more than one workflow.
+    action: Plan the agent contract
+    details: Specify persona and purpose, trigger, inputs, outputs, integrations, shared capabilities, permissions, failure behavior, and approval points.
   - step: 5
-    action: Add evaluations
-    details: Cover the happy path, ambiguity, tool failure, safety boundary, and the highest-value regression case.
+    action: Plan reusable skills and evaluations
+    details: Extract only repeatable reasoning procedures that can serve multiple workflows; cover normal use, ambiguity, tool failure, safety, and regressions.
   - step: 6
-    action: Package and validate
-    details: Keep the canonical definition provider-neutral and verify it before generating platform adapters.
+    action: Return a reviewable proposal
+    details: Present the plan and open decisions in chat; include candidate definitions only when requested and never apply changes to files.
 constraints:
   - Do not promise cloud publication from a local export.
   - Do not include secrets or assume access to credentials.
   - Do not add an agent when a skill or workflow change is sufficient.
   - Do not hide missing requirements behind generic prompts.
+  - Do not claim integrations, permissions, or runtime support without evidence.
+  - Do not write to the canonical repository, generated adapters, or hosted platforms.
 expected_output:
   format: structured_json
-  description: Bounded agent and skill definitions with contracts, permissions, evaluations, assumptions, and next actions.
+  description: Decision-ready plan with purpose, triggers, contracts, tools/data, shared capabilities, overlaps, permissions, open decisions, dependencies, evaluations, and next actions; optional candidate definitions are chat-only.
 failure_behavior:
   on_missing_input: Identify the smallest missing decision that blocks a safe design.
-  on_ambiguity: State assumptions and present the narrowest viable option.
-  on_tool_failure: Return a draft definition with explicit unverified areas.
+  on_ambiguity: Present realistic options and tradeoffs or ask one focused question when the choice materially changes the design.
+  on_tool_failure: Return the plan with explicit unverified areas and blockers; do not claim repository validation.

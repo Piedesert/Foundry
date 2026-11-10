@@ -1,6 +1,6 @@
 eval_id: agent-builder-baseline
 agent_id: agent-builder
-version: 0.1.0
+version: 0.2.0
 description: Baseline scenarios for designing bounded, reusable agents and skills.
 scenarios:
   - id: developer-productivity-agent
@@ -46,3 +46,55 @@ scenarios:
         criterion: output identifies the target platform and credentialed publication decision as blockers
       - type: not_contains
         criterion: output does not claim that cloud publication occurred
+  - id: decision-ready-agent-plan
+    description: Plan a bounded assistant and return a reviewable design before proposing files.
+    input:
+      mode: plan
+      problem: I repeatedly prepare a weekly report from a set of approved internal documents.
+      desired_outcomes:
+        - Reduce repetitive research and formatting
+        - Keep claims traceable to source documents
+      available_tools:
+        - User has not specified any connected systems
+    expected_assertions:
+      - type: contains
+        criterion: plan covers purpose, trigger, inputs, outputs, data boundaries, permissions, dependencies, open decisions, and evaluations
+      - type: contains
+        criterion: unverified integrations are identified as decisions rather than treated as available
+      - type: not_contains
+        criterion: output claims that files were created or changed
+  - id: material-design-options
+    description: Preserve material alternatives when the problem could be handled as an agent, skill, or workflow.
+    input:
+      mode: plan
+      problem: Help me classify short incoming text and attach it to the right process.
+      existing_context: A General Manager agent may already answer questions from process documents.
+    expected_assertions:
+      - type: contains
+        criterion: compares agent, skill, workflow-only, and reuse options where applicable
+      - type: contains
+        criterion: explains tradeoffs and asks a focused question if the process or destination changes the design materially
+  - id: builder-plan-is-read-only
+    description: Ensure planning and definition proposals never apply local or hosted changes.
+    input:
+      mode: definition_proposal
+      problem: Draft a reusable agent for reviewing a supplied code diff.
+      constraints:
+        - Return candidate definitions in chat only
+        - Do not write files, sync adapters, or publish
+    expected_assertions:
+      - type: contains
+        criterion: any candidate definition is clearly labeled as a proposal for the user to apply
+      - type: not_contains
+        criterion: output claims a file, adapter, workflow, or hosted agent was modified
+      - type: status_equals
+        criterion: success or partial
+  - id: reuse-agent-design-skill
+    description: Avoid adding a new skill when an existing design capability covers the need.
+    input:
+      mode: plan
+      problem: Create a process for identifying agent inputs, outputs, permissions, and evaluations.
+      existing_context: The repository already has an agent-design skill with those responsibilities.
+    expected_assertions:
+      - type: contains
+        criterion: identifies reuse or a precise revision of the existing skill instead of duplicating it

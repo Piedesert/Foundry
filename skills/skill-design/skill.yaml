@@ -1,8 +1,8 @@
 id: skill-design
-version: 0.1.0
+version: 0.2.0
 name: Skill Design
-description: Converts a repeatable capability into a narrow, reusable, provider-neutral skill definition.
-purpose: Produce portable skills with explicit inputs, procedures, constraints, failure behavior, and evaluation coverage.
+description: Diagnoses agent capability gaps and plans narrow, reusable, provider-neutral skill improvements.
+purpose: Recommend reuse, composition, revision, or a new skill with explicit scope, portability, failure behavior, and evaluation coverage.
 applicability:
   - Cross-provider agent design
   - Developer productivity
@@ -21,34 +21,51 @@ required_inputs:
     type: array
     description: Safety, privacy, tool, and portability constraints.
     required: false
+  target_agent:
+    type: string
+    description: Existing agent to inspect when proposing an improvement.
+    required: false
+  observed_gap:
+    type: string
+    description: Repeated shortcoming or evaluation failure the proposal should address.
+    required: false
+  evidence:
+    type: array
+    description: Examples or evaluation findings supporting the observed gap.
+    required: false
 procedure:
   - step: 1
-    action: Test reusability
-    details: Confirm the capability applies across multiple tasks, agents, or contexts rather than only one example.
+    action: Inspect the target
+    details: For an agent-improvement request, inspect its manifest, instructions, linked skills, and evaluations; ask for missing target or evidence.
   - step: 2
-    action: Check for overlap
-    details: Compare the capability with existing skills and choose reuse, composition, revision, or a new skill.
+    action: Confirm the gap is reusable
+    details: Distinguish a repeated cross-agent procedure from one-off workflow logic or missing integration behavior.
   - step: 3
-    action: Define the contract
-    details: Specify required inputs, optional context, expected output, tools, constraints, failure behavior, and stop conditions.
+    action: Compare improvement options
+    details: Choose reuse, composition, revision, or creation and explain why alternatives do not fit.
   - step: 4
-    action: Write the procedure
-    details: Express the reasoning as bounded numbered steps that do not rely on hidden provider behavior.
+    action: Map affected agents
+    details: Identify candidate consumers and any required instruction, contract, permission, or evaluation changes.
   - step: 5
-    action: Review portability
-    details: Remove provider-specific syntax and identify runtime capabilities that must be supplied by an adapter or workflow.
+    action: Define the candidate contract
+    details: Specify inputs, output, bounded procedure, constraints, stop conditions, and failure behavior.
   - step: 6
-    action: Create evaluations
-    details: Cover normal execution, missing input, ambiguity, tool failure, and the most important safety or portability boundary.
+    action: Review portability and evaluations
+    details: Mark unverified runtime capabilities and propose tests for normal use, missing input, ambiguity, tool failure, overlap, and safety.
+  - step: 7
+    action: Return a chat proposal
+    details: Present the decision and plan; include a candidate manifest only when requested and never write repository files.
 constraints:
   - Do not duplicate an existing skill without documenting the distinct boundary.
   - Do not put secrets, credentials, or provider-specific prompt delimiters in a canonical skill.
   - Do not assume memory, browsing, code execution, or structured output without declaring the dependency.
   - Keep the skill independently understandable and composable.
+  - Do not propose a new skill when reuse, composition, or a narrow revision is sufficient.
+  - Do not write to the canonical repository, generated adapters, or hosted platforms.
 expected_output:
   format: structured_json
-  description: A validated provider-neutral skill manifest with portability notes, evaluations, assumptions, and next actions.
+  description: An improvement decision, affected-agent map, portability review, evaluation plan, open assumptions, and next actions; optional candidate manifest is chat-only.
 failure_behavior:
   on_missing_input: Identify the smallest missing capability definition needed to proceed.
-  on_ambiguity: State assumptions and narrow the skill boundary rather than generalizing indefinitely.
-  on_tool_failure: Return a draft with unverified overlap or portability areas explicitly marked.
+  on_ambiguity: Present realistic reuse, composition, revision, and creation options or ask one focused question when the choice is material.
+  on_tool_failure: Return a plan with unverified overlap or portability areas explicitly marked; do not claim repository validation.

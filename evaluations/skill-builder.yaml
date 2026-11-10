@@ -1,6 +1,6 @@
 eval_id: skill-builder-baseline
 agent_id: skill-builder
-version: 0.1.0
+version: 0.2.0
 description: Baseline scenarios for building reusable provider-neutral skills.
 scenarios:
   - id: cross-provider-code-review-skill
@@ -48,3 +48,69 @@ scenarios:
         criterion: output identifies the unresolved provider capability as a portability blocker
       - type: not_contains
         criterion: output does not claim cross-provider support without an adapter design
+  - id: improve-existing-agent
+    description: Diagnose a repeated gap in an existing agent before recommending a skill change.
+    input:
+      mode: improve_existing_agent
+      target_agent: research
+      capability: Carry source identifiers from retrieved evidence through claim summaries.
+      observed_gap: Research findings sometimes cite text without preserving a stable source reference.
+      evidence:
+        - Regression review found a claim with a citation that could not be matched to the returned source list.
+      existing_skills: source-verification and structured-output are available in the repository.
+    expected_assertions:
+      - type: contains
+        criterion: inspects the target agent, linked skills, and evaluations before deciding
+      - type: contains
+        criterion: compares reuse, composition, revision, and creation with rationale
+      - type: contains
+        criterion: maps affected agents and proposes evaluations for source-reference integrity
+  - id: reuse-before-create
+    description: Recommend an existing skill or a precise revision when it already covers the capability.
+    input:
+      mode: improve_existing_agent
+      target_agent: news-rundown
+      capability: Rank candidate news stories by topic relevance and evidence quality.
+      observed_gap: The same ranking behavior is being proposed as a second skill.
+      existing_skills: news-ranking already defines story ranking and selection criteria.
+    expected_assertions:
+      - type: contains
+        criterion: chooses reuse, composition, or a scoped revision rather than a duplicate skill
+      - type: contains
+        criterion: states what limitation remains if the existing skill is insufficient
+  - id: one-off-workflow-is-not-skill
+    description: Keep destination-specific orchestration outside a reusable reasoning skill.
+    input:
+      mode: improve_existing_agent
+      target_agent: news-rundown
+      capability: Send the finished digest to one configured Discord channel at 7 AM.
+      observed_gap: Delivery destination and schedule are hard-coded in a proposed skill.
+    expected_assertions:
+      - type: contains
+        criterion: identifies schedule, credentials, and destination as workflow configuration rather than reusable reasoning
+      - type: contains
+        criterion: recommends no new skill or separates only the genuinely reusable portion
+  - id: missing-improvement-evidence
+    description: Ask for enough context when an existing-agent improvement request is underspecified.
+    input:
+      mode: improve_existing_agent
+      capability: Make the agent better.
+    expected_assertions:
+      - type: status_equals
+        criterion: partial or blocked
+      - type: contains
+        criterion: asks for the target agent and an observed gap or example
+  - id: skill-proposal-is-read-only
+    description: Ensure skill proposals do not edit files or claim installation.
+    input:
+      mode: improve_existing_agent
+      target_agent: project-planner
+      capability: Improve dependency validation.
+      observed_gap: Some proposed plans reference a deliverable ID that is not present.
+      constraints:
+        - Return any proposal in chat; do not edit repository files.
+    expected_assertions:
+      - type: contains
+        criterion: candidate manifest is clearly proposed for the user to apply
+      - type: not_contains
+        criterion: output claims a file, adapter, or hosted agent was changed

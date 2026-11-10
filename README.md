@@ -81,6 +81,8 @@ The staged Financier agent scope, market-data contracts, paper-only Webull safeg
 
 For a concise cross-session summary of implementation status, decisions, n8n observations, and the next action, see [docs/session-handoff.md](docs/session-handoff.md).
 
+For the manual Agent Builder and Skill Builder evaluation procedure, see [docs/builder-evaluation.md](docs/builder-evaluation.md). Evaluation YAML files are validated fixtures; they are not automatically executed against a model.
+
 ## Adding an agent
 
 1. Add `<agent-id>/agent.yaml` and a sibling `system.md` under `agents/`.
@@ -91,8 +93,8 @@ For a concise cross-session summary of implementation status, decisions, n8n obs
 
 ## Agent Builder
 
-The `agent-builder` agent is the recommended starting point for new developer, videography, editing, and personal productivity capabilities. Give it a recurring problem and desired outcomes; it should produce a bounded agent, reusable skills, contracts, permissions, evaluations, and next actions. Keep the canonical definitions under `agents/` and `skills/`, then generate the platform adapters.
+The `agent-builder` agent is the recommended starting point for planning a new capability. It returns a structured plan in chat by default and candidate definitions only when requested. It must not write canonical files or generated artifacts; the user applies accepted proposals, runs validation/tests, and reviews generated outputs.
 
 ## Skill Builder
 
-The `skill-builder` agent is for repeatable capabilities that should be shared by multiple agents or runtimes. It checks for overlap with existing skills, defines a provider-neutral contract and procedure, reviews portability across Claude, Gemini, ChatGPT/Codex, Microsoft Foundry, and workflow consumers, and proposes evaluations before adapter generation.
+The `skill-builder` agent diagnoses a repeated gap in an existing agent and recommends reuse, composition, revision, or a new skill. It maps affected agents, reviews portability, proposes evaluations, and returns candidate definitions in chat only when requested. It must not apply repository or hosted changes.

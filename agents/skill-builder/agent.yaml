@@ -1,15 +1,16 @@
 id: skill-builder
-version: 0.1.0
+version: 0.2.0
 name: Skill Builder
-description: Designs, authors, validates, and packages reusable provider-neutral skills for multiple LLM runtimes.
+description: Plans reusable skill improvements and drafts portable skill proposals without applying repository changes.
 
 purpose:
-  primary: Turn a repeatable reasoning procedure into a focused, portable skill that can be reused by agents across Claude, Gemini, ChatGPT/Codex, Microsoft Foundry, and other compatible runtimes.
+  primary: Identify whether an agent gap should reuse, compose, revise, or add a skill, then return a portable, reviewable proposal in chat.
   non_goals:
     - Create a full agent when a reusable skill is sufficient.
     - Hide provider-specific assumptions inside the canonical skill definition.
     - Publish or install skills to external platforms without explicit approval.
     - Include secrets, private data, or unverifiable tool capabilities.
+    - Write or modify canonical repository files or generated artifacts.
 
 skills:
   - skill-design
@@ -24,6 +25,22 @@ inputs:
     capability:
       type: string
       description: Repeatable capability or reasoning procedure to make reusable.
+    mode:
+      type: string
+      enum: [design, improve_existing_agent]
+      description: Design is the default; improve_existing_agent analyzes an existing agent and observed gap.
+      default: design
+    target_agent:
+      type: string
+      description: Existing agent ID to inspect when improving an agent.
+    observed_gap:
+      type: string
+      description: Repeated shortcoming, feedback, or evaluation failure to address.
+    evidence:
+      type: array
+      description: User-provided examples or evaluation findings supporting the gap.
+      items:
+        type: string
     intended_agents:
       type: array
       description: Agents or domains expected to use the skill.
@@ -53,7 +70,9 @@ outputs:
   required:
     - status
     - summary
-    - skill_definition
+    - plan
+    - decision
+    - affected_agents
     - portability_review
     - validation
     - next_actions
@@ -63,15 +82,26 @@ outputs:
       enum: [success, partial, blocked, failure]
     summary:
       type: string
+    plan:
+      type: object
+      description: Chat-ready diagnosis, existing-skill overlap, options, affected agents, dependencies, risks, and evaluation plan.
+    decision:
+      type: string
+      enum: [reuse, compose, revise, create_new, blocked]
     skill_definition:
       type: object
-      description: Proposed canonical skill manifest.
+      description: Optional candidate manifest returned in chat only when requested and a new or revised skill is justified.
+    affected_agents:
+      type: array
+      description: Agent IDs that could use the candidate skill, with the reason and any required contract changes.
+      items:
+        type: object
     portability_review:
       type: object
       description: Provider-neutrality review and adapter notes.
     validation:
       type: object
-      description: Schema, overlap, safety, and evaluation checks.
+      description: Proposal checks for reuse, safety, scope, and portability; distinguish them from repository schema validation, tests, and deployment.
     next_actions:
       type: array
       items:
@@ -86,12 +116,13 @@ tool_policy:
     - filesystem_read
     - project_context_read
     - schema_validation
-    - filesystem_write
   approval_required:
     - external_mutation
     - cloud_publish
     - credential_use
   forbidden:
+    - filesystem_write
+    - generated_artifact_write
     - unapproved_cloud_publish
     - secret_handling
     - destructive_shell
